@@ -1,17 +1,17 @@
 Marmottajax
 =========
 
-Envoyer et recevoir des informations simplement en JavaScript avec Marmottajax
+Envoyer et recevoir des informations simplement en JavaScript avec Marmottajax.
 
   - Tiny : 2ko minified
   - Simple
-  - Magic
+  - Ajax is Magic
 
 
 > L'AjaxMarmotte de Dimou il est trop bien ! :D
-
 > — *[Jeremy](https://twitter.com/jeremy__fr/status/473053329787211778)*
 
+![Logo](https://raw.githubusercontent.com/marmottes/marmottajax/master/marmottajax.jpg "logo")
 
 Exemple simple
 ----
@@ -56,16 +56,14 @@ post.php :
 Toutes les options
 ----
 
-Recuperer le contenu d'un fichier "foo.txt" :
-
 ```javascript
-marmottajax.get({ // OU marmottajax.post
+marmottajax.get({ // OU marmottajax.post() OU marmottajax()
 
     url: "", // obligatoire, peut être abrégé en marmottajax.get(url).then(callback); (voir premier exemple)
 
     method: "", // GET par defaut ou défini par marmottajax.get et marmottajax.post
 
-    json: /true|false/, // false par defaut, la reponse sera automatiquement parsé si "true"
+    json: false, // false par defaut, la reponse sera automatiquement parsé si "true"
 
     options: {} // options à envoyer en GET (par l'url) ou en POST (dépend de la méthode)
 
