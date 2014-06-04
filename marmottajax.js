@@ -1,6 +1,6 @@
 
 /*
- *  Marmottajax 1.0.0
+ *  Marmottajax 1.0.1
  *  Envoyer et recevoir des informations simplement en JavaScript
  */
 
@@ -10,22 +10,21 @@ var marmottajax = function(options) {
 
 };
 
+marmottajax.normalize = function(parameters) {
+
+	return parameters ? (typeof parameters === "string" ? { url: parameters } : parameters) : false;
+
+};
+
 marmottajax.json = function(parameters) {
 
-    if (!parameters) { return false; }
+    if (parameters = marmottajax.normalize(parameters)) {
 
-    var options = parameters;
+    	parameters.json = true;
+    	
+    	return new marmottajax.request(parameters);
 
-    if (typeof parameters == "string") {
-
-        options = { url: parameters };
-
-    }
-
-    options.method = "GET";
-    options.json = true;
-
-    return new marmottajax.request(options);
+	}
 
 };
 
@@ -37,19 +36,13 @@ marmottajax.get = function(options) {
 
 marmottajax.post = function(parameters) {
 
-    if (!parameters) { return false; }
+    if (parameters = marmottajax.normalize(parameters)) {
 
-    var options = parameters;
+    	parameters.method = "POST";
 
-    if (typeof parameters == "string") {
+ 	   	return new marmottajax.request(parameters);
 
-        options = { url: parameters };
-
-    }
-
-    options.method = "POST";
-
-    return new marmottajax.request(options);
+	}
 
 };
 
@@ -57,23 +50,19 @@ marmottajax.request = function(options) {
 
     if (!options) { return false; }
 
-    this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-
-    this.xhr.options = options;
-
     if (typeof options == "string") {
 
-        this.xhr.options = { url: options };
+        options = { url: options };
 
     }
 
-    if (this.xhr.options.method === "POST") {
+    if (options.method === "POST") {
 
         var post = "?";
 
-        for (var key in this.xhr.options.options) {
+        for (var key in options.options) {
 
-            post += this.xhr.options.options.hasOwnProperty(key) ? "&" + key + "=" + this.xhr.options.options[key] : "";
+            post += options.options.hasOwnProperty(key) ? "&" + key + "=" + options.options[key] : "";
 
         }
 
@@ -81,17 +70,21 @@ marmottajax.request = function(options) {
 
     else {
 
-        this.xhr.options.method = "GET";
+        options.method = "GET";
 
-        this.xhr.options.url += this.xhr.options.url.indexOf("?") < 0 ? "?" : "";
+        options.url += options.url.indexOf("?") < 0 ? "?" : "";
 
-        for (var key in this.xhr.options.options) {
+        for (var key in options.options) {
 
-            this.xhr.options.url += this.xhr.options.options.hasOwnProperty(key) ? "&" + key + "=" + this.xhr.options.options[key] : "";
+            options.url += options.options.hasOwnProperty(key) ? "&" + key + "=" + options.options[key] : "";
 
         }
 
     }
+
+    this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+
+    this.xhr.options = options;
 
     this.xhr.callbacks = {
 
@@ -116,31 +109,29 @@ marmottajax.request = function(options) {
 
     };
 
+    this.xhr.call = function(categorie, result) {
+
+    	for (var i = 0; i < this.callbacks[categorie].length; i++) {
+
+    	    if (typeof(this.callbacks[categorie][i]) === "function") {
+
+    	        this.callbacks[categorie][i](result);
+
+    	    }
+
+    	}
+
+    }
+
     this.xhr.returnSuccess = function(result) {
 
-        for (var i = 0; i < this.callbacks.then.length; i++) {
-
-            if (typeof(this.callbacks.then[i]) == "function") {
-
-                this.callbacks.then[i](result);
-
-            }
-
-        }
+    	this.call("then", result);
 
     };
 
     this.xhr.returnError = function(message) {
 
-        for (var i = 0; i < this.callbacks.error.length; i++) {
-
-            if (typeof(this.callbacks.error[i]) == "function") {
-
-                this.callbacks.error[i](message);
-
-            }
-            
-        }
+    	this.call("error", message);
 
     };
 
@@ -186,10 +177,8 @@ marmottajax.request = function(options) {
 
     };
 
-    this.xhr.open(this.xhr.options.method, this.xhr.options.url, true);
+    this.xhr.open(options.method, options.url, true);
     this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     this.xhr.send(typeof post != "undefined" ? post : null);
-
-    return this;
 
 };

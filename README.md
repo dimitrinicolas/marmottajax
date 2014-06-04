@@ -1,9 +1,9 @@
-Marmottajax
+MarmottAjax
 =========
 
-Envoyer et recevoir des informations simplement en JavaScript avec Marmottajax.
+Envoyer et recevoir des informations simplement en JavaScript avec MarmottAjax.
 
-  - Tiny : 2ko minified
+  - Tiny : 1.5ko minified
   - Simple
   - Ajax is Magic
 
@@ -11,7 +11,7 @@ Envoyer et recevoir des informations simplement en JavaScript avec Marmottajax.
 > L'AjaxMarmotte de Dimou il est trop bien ! :D
 > — *[Jeremy](https://twitter.com/jeremy__fr/status/473053329787211778)*
 
-![Logo](https://raw.githubusercontent.com/marmottes/marmottajax/master/marmottajax.jpg "logo")
+![Logo](https://raw.githubusercontent.com/marmottes/marmottajax/master/image.jpg "logo")
 
 Exemple simple
 ----
