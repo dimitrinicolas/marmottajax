@@ -46,6 +46,30 @@ marmottajax.post = function(parameters) {
 
 };
 
+marmottajax.put = function(parameters) {
+
+    if (parameters = marmottajax.normalize(parameters)) {
+
+        parameters.method = "PUT";
+
+        return new marmottajax.request(parameters);
+
+    }
+
+};
+
+marmottajax.delete = function(parameters) {
+
+	if (parameters = marmottajax.normalize(parameters)) {
+
+    	parameters.method = "DELETE";
+
+ 	   	return new marmottajax.request(parameters);
+
+	}
+
+};
+
 marmottajax.request = function(options) {
 
     if (!options) { return false; }
@@ -63,6 +87,30 @@ marmottajax.request = function(options) {
         for (var key in options.options) {
 
             post += options.options.hasOwnProperty(key) ? "&" + key + "=" + options.options[key] : "";
+
+        }
+
+    }
+
+    else if (options.method === "PUT") {
+
+        var post = "?";
+
+        for (var key in options.options) {
+
+            post += options.options.hasOwnProperty(key) ? "&" + key + "=" + options.options[key] : "";
+
+        }
+
+    }
+
+    else if (options.method == "DELETE") {
+
+    	options.url += options.url.indexOf("?") < 0 ? "?" : "";
+
+        for (var key in options.options) {
+
+            options.url += options.options.hasOwnProperty(key) ? "&" + key + "=" + options.options[key] : "";
 
         }
 
