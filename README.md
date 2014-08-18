@@ -3,15 +3,10 @@ MarmottAjax
 
 Envoyer et recevoir des informations simplement en JavaScript avec MarmottAjax.
 
-  - Tiny : 1.5ko minified
-  - Simple
-  - Ajax is Magic
-
-
 > L'AjaxMarmotte de Dimou il est trop bien ! :D
 > — *[Jeremy](https://twitter.com/jeremy__fr/status/473053329787211778)*
 
-![Logo](https://raw.githubusercontent.com/marmottes/marmottajax/master/image.jpg "logo")
+![Logo](image.jpg "logo")
 
 Exemple simple
 ----
@@ -57,15 +52,15 @@ Toutes les options
 ----
 
 ```javascript
-marmottajax.get({ // OU marmottajax.post() OU marmottajax()
+marmottajax.get({ // OU marmottajax.post|put|delete() OU marmottajax()
 
     url: "", // obligatoire, peut être abrégé en marmottajax.get(url).then(callback); (voir premier exemple)
 
-    method: "", // GET par defaut ou défini par marmottajax.get et marmottajax.post
+    method: "", // GET par defaut ou défini par la fonction appelée
 
     json: false, // false par defaut, la reponse sera automatiquement parsé si "true"
 
-    options: {} // options à envoyer en GET (par l'url) ou en POST (dépend de la méthode)
+    options: {} // informations à envoyer en GET ou en POST (dépend de la méthode)
 
 }).then(function(result) {
 
@@ -73,7 +68,7 @@ marmottajax.get({ // OU marmottajax.post() OU marmottajax()
 
 }).error(function(message) {
 
-    // message: "404", "invalid json" ou "unknow"
+    // message => "404", "invalid json", "unknow" ou `null`
 
 });
 ```
