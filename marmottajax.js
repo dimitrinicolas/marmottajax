@@ -1,6 +1,6 @@
 
 /*
- *  Marmottajax 1.0.3
+ *  Marmottajax 1.1.0
  *  Envoyer et recevoir des informations simplement en JavaScript
  */
 
@@ -58,7 +58,7 @@ marmottajax.put = function(parameters) {
 
 };
 
-marmottajax.delete = function(parameters) {
+marmottajax.delete_ = function(parameters) {
 
     if (parameters = marmottajax.normalize(parameters)) {
 
