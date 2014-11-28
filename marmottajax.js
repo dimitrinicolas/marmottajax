@@ -107,27 +107,43 @@ marmottajax.request = function(options) {
     }
 
     this.xhr = null;
-    if (window.XMLHttpRequest)
+
+    if (window.XMLHttpRequest) {
+
         this.xhr = new XMLHttpRequest();
+
+    }
  
-    if (window.ActiveXObject)
-    {
+    if (window.ActiveXObject) {
+
         var names = [
+
             "Msxml2.XMLHTTP.6.0",
             "Msxml2.XMLHTTP.3.0",
             "Msxml2.XMLHTTP",
             "Microsoft.XMLHTTP"
+
         ];
-        for(var i in names)
-        {
-            try{ this.xhr = new ActiveXObject(names[i]); break; }
-            catch(e){}
+
+        for (var i in names) {
+
+            try {
+
+                this.xhr = new ActiveXObject(names[i]);
+                break;
+
+            }
+
+            catch(e) { }
+
         }
+
     }
     
-    if(this.xhr == null) {
-        window.alert("Your browser doesn't support XMLHTTPRequest.");
+    if (!this.xhr) {
+
         throw "xhr not supported";
+
     }
 
     this.xhr.options = options;
