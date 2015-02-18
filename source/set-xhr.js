@@ -38,7 +38,7 @@ marmottajax.prototype.setXhr = function() {
 
 	};
 
-	for (name in this.xhr.callbacks) {
+	for (var name in this.xhr.callbacks) {
 
 		if (this.xhr.callbacks.hasOwnProperty(name)) {
 
