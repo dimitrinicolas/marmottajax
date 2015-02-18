@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MarmottAjax — demo</title>
+
+        <script src="../bin/marmottajax.js"></script>
+
+    </head>
+
+    <body>
+
+        <h2>Check the source code</h2>
+
+        <div id="console"></div>
+    
+        <script>
+
+            /**
+             * Simply get file content
+             */
+
+            marmottajax("text-file.txt").then(function(content) {
+
+                document.getElementById("console").innerHTML += "<br>";
+                document.getElementById("console").innerHTML += "`text-file.txt` : " + content;
+
+            });
+
+            /**
+             * Post
+             */
+
+            marmottajax({
+
+                url: "post.php",
+                method: "post",
+
+                parameters: {
+
+                    image: 8,
+                    by: "click"
+
+                }
+
+            }).then(function(result) {
+
+                document.getElementById("console").innerHTML += "<br>";
+                document.getElementById("console").innerHTML += "Success to post to `post.php`";
+
+            }).error(function(message) {
+
+                document.getElementById("console").innerHTML += "<br>";
+                document.getElementById("console").innerHTML += "<i style=\"color: red\">Error when posting to `post.php`</i>";
+
+            });
+
+            /**
+             * Get Json
+             */
+
+        	marmottajax({
+
+        		url: "data.json",
+                json: true
+
+        	}).then(function(result) {
+
+                this.innerHTML += "<br>";
+                this.innerHTML += "Get `data.json` : " + JSON.stringify(result)
+
+            }).bind(document.getElementById("console"));
+
+            /**
+             * Watch changes on file
+             */
+
+            var watcher = new marmottajax({
+
+                url: "data.json",
+                json: true,
+                watch: 200
+
+            }).change(function(result) {
+
+                document.getElementById("console").innerHTML += "<br>";
+                document.getElementById("console").innerHTML += "Detected changes on `data.json` : " + JSON.stringify(result);
+
+            });
+
+            // Change interval time of `watcher`
+
+            setTimeout(function() {
+
+                watcher.changeTime(1000);
+
+            }, 800);
+
+        </script>
+
+    </body>
+
+</html>

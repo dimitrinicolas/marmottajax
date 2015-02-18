@@ -1,0 +1,22 @@
+{
+  "name": "marmottajax",
+  "description": "Envoyer et recevoir des informations simplement en JavaScript avec MarmottAjax",
+  "version": "2.0.0",
+  "author": "Dimitri Nicolas",
+  "scripts": {
+    "build": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dimitrinicolas/marmottajax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dimitrinicolas/marmottajax/issues"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.1.0"
+  }
+}

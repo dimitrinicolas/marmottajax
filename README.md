@@ -1,79 +1,78 @@
-MarmottAjax
-=========
-
-Envoyer et recevoir des informations simplement en JavaScript avec MarmottAjax.
-
-> L'AjaxMarmotte de Dimou il est trop bien ! :D
-> — *[Jeremy](https://twitter.com/jeremy__fr/status/473053329787211778)*
+# MarmottAjax
+> Librairie de requêtes Ajax intelligentes
 
 ![Logo](image.jpg "logo")
 
-Exemple simple
-----
+## Utilisation
 
-Recuperer le contenu d'un fichier "foo.txt" :
+Les différentes méthodes que l'on peut utiliser avec cette librairie sont : `get`, `post`, `put`, `update` et `delete`.
 
+*Exemples*
 ```javascript
-marmottajax("foo.txt").then(function(result) {
-    alert(result);
+/**
+ * Simply get file content
+ */
+
+marmottajax("text-file.txt").then(function(content) {
+    // content
 });
-```
 
-Exemple Json
-----
+/**
+ * Post
+ */
 
-Recuperer le contenu du fichier json "marmottes.json" parsé :
-
-```javascript
-marmottajax.json("marmottes.json").then(function(marmottes) {
-	console.log(marmottes);
-}).error(function(message) {
-	console.error(message);
-});
-```
-
-Exemple de POST php
-----
-
-Envoyer des données avec la méthode POST :
-
-```javascript
-marmottajax.post({
+marmottajax({
     url: "post.php",
-    options: { marmotte: "Dimou" }
-});
-```
-post.php :
-```php
-<?php echo $_POST["marmotte"];
-```
-
-Toutes les options
-----
-
-```javascript
-marmottajax.get({ // OU marmottajax.post|put|delete() OU marmottajax()
-
-    url: "", // obligatoire, peut être abrégé en marmottajax.get(url).then(callback); (voir premier exemple)
-
-    method: "", // GET par defaut ou défini par la fonction appelée
-
-    json: false, // false par defaut, la reponse sera automatiquement parsé si "true"
-
-    options: {} // informations à envoyer en GET ou en POST (dépend de la méthode)
-
+    method: "post",
+    parameters: {
+        image: 8,
+        by: "click"
+    }
 }).then(function(result) {
-
     // result
-
 }).error(function(message) {
-
-    // message => "404", "invalid json", "unknow" ou `null`
-
+    // message
 });
+
+/**
+ * Get Json
+ */
+
+marmottajax({
+    url: "data.json",
+    json: true
+}).then(function(result) {
+    // result
+}).bind(document.getElementById("console"));
+
+/**
+ * Watch changes on file
+ */
+
+var watcher = new marmottajax({
+    url: "data.json",
+    json: true,
+    watch: 200
+}).change(function(result) {
+    // result
+});
+
+// Change interval time of `watcher`
+setTimeout(function() {
+    watcher.changeTime(1000);
+}, 800);
 ```
 
-License
-----
+## Contributing
+
+MarmottAjax nécessite quelques dépendances de développement :
+
+ - Installer NodeJs : [nodejs.org](http://nodejs.org/)
+ - Installer Gulp : `npm i -g gulp`
+ - Installer les modules : `npm i`
+
+ - Lancer `gulp` pour pouvoir commencer à développer
+
+## License
 
 [WTFPL](http://www.wtfpl.net/)
