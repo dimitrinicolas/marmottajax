@@ -1,7 +1,8 @@
 {
   "name": "marmottajax",
-  "description": "Envoyer et recevoir des informations simplement en JavaScript avec MarmottAjax",
+  "description": "Easily use ajax in your application",
   "version": "2.0.0",
+  "main": "bin/marmottajax.js",
   "author": "Dimitri Nicolas",
   "scripts": {
     "build": "gulp"
