@@ -1,8 +1,8 @@
 {
   "name": "marmottajax",
   "description": "Easily use ajax in your application",
-  "version": "2.0.0",
-  "main": "bin/marmottajax.js",
+  "version": "2.0.1",
+  "main": "bin/module.js",
   "author": "Dimitri Nicolas",
   "scripts": {
     "build": "gulp"

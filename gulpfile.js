@@ -7,11 +7,23 @@ var concat = require("gulp-concat"),
 
 gulp.task("compile", function () {
 
+	gulp.src([
+
+			"source/main.js",
+			"source/exporter.js",
+			"source/contants.js",
+			"source/**/*.js"
+
+		])
+		.pipe(concat("module.js"))
+		.pipe(gulp.dest("bin/"));
+
 	return gulp.src([
 
 			"source/main.js",
 			"source/contants.js",
-			"source/**/*.js"
+			"source/**/*.js",
+			"!source/exporter.js"
 
 		])
 		.pipe(concat("marmottajax.js"))
