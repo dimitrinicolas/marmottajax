@@ -1,13 +1,13 @@
 # MarmottAjax
-> Librairie de requêtes Ajax intelligentes
+> Ajax requests intelligent library
 
 ![Logo](image.jpg "logo")
 
-## Utilisation
+## Usage
 
-Les différentes méthodes que l'on peut utiliser avec cette librairie sont : `get`, `post`, `put`, `update` et `delete`.
+The different methods that can be used with this library are: `get`,` post`, `put`, `update` and `delete`.
 
-*Exemples*
+*Samples*
 ```javascript
 /**
  * Simply get file content
@@ -65,13 +65,13 @@ setTimeout(function() {
 
 ## Contributing
 
-MarmottAjax nécessite quelques dépendances de développement :
+MarmottAjax requires some development dependencies :
 
- - Installer NodeJs : [nodejs.org](http://nodejs.org/)
- - Installer Gulp : `npm i -g gulp`
- - Installer les modules : `npm i`
+ - NodeJs : [nodejs.org](http://nodejs.org/)
+ - Gulp : `npm i -g gulp`
+ - And some modules : `npm i`
 
- - Lancer `gulp` pour pouvoir commencer à développer
+ - Start `gulp` command and you can start to edit the code
 
 ## License
 
