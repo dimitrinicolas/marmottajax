@@ -17,7 +17,7 @@ var marmottajax = function() {
 
 	if (data === null) {
 
-		throw "Les arguments passées à la fonction marmottajax sont invalides.";
+		throw "Les arguments passées à marmottajax sont invalides.";
 
 	}
 
@@ -26,6 +26,7 @@ var marmottajax = function() {
 	this.json = data.json;
 	this.watch = data.watch;
 	this.parameters = data.parameters;
+	this.headers = data.headers;
 
 	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete") {
 
@@ -150,6 +151,12 @@ marmottajax.normalize = function(data) {
 	if (typeof result.parameters !== "object") {
 
 		result.parameters = marmottajax.defaultData.parameters;
+
+	}
+
+	if (typeof result.headers !== "object") {
+
+		result.headers = marmottajax.defaultData.headers;
 
 	}
 
@@ -330,6 +337,17 @@ marmottajax.prototype.setXhr = function() {
 
 	this.xhr.open(this.method, this.url, true);
 	this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+	if (this.headers) {
+		for (header in this.headers) {
+			if (this.headers.hasOwnProperty(header)) {
+		
+				this.xhr.setRequestHeader(header, this.headers[header]);
+		
+			}
+		}
+	}
+
 	this.xhr.send(typeof this.postData != "undefined" ? this.postData : null);
 
 };

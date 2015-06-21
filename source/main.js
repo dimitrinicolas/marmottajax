@@ -17,7 +17,7 @@ var marmottajax = function() {
 
 	if (data === null) {
 
-		throw "Les arguments passées à la fonction marmottajax sont invalides.";
+		throw "Les arguments passées à marmottajax sont invalides.";
 
 	}
 
@@ -26,6 +26,7 @@ var marmottajax = function() {
 	this.json = data.json;
 	this.watch = data.watch;
 	this.parameters = data.parameters;
+	this.headers = data.headers;
 
 	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete") {
 

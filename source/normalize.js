@@ -77,6 +77,12 @@ marmottajax.normalize = function(data) {
 
 	}
 
+	if (typeof result.headers !== "object") {
+
+		result.headers = marmottajax.defaultData.headers;
+
+	}
+
 	return result;
 
 };

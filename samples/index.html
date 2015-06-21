@@ -74,6 +74,27 @@
                 this.innerHTML += "Get `data.json` : " + JSON.stringify(result)
 
             }).bind(document.getElementById("console"));
+            
+            /**
+             * With setted headers
+             */
+
+            marmottajax({
+
+                url: "headers.php",
+                method: "get",
+                headers: {
+
+                    "Accept": "text/xml"
+
+                }
+
+            }).then(function(result) {
+
+                document.getElementById("console").innerHTML += "<br>";
+                document.getElementById("console").innerHTML += ("`headers.php` result : " + result);
+
+            });
 
             /**
              * Watch changes on file
