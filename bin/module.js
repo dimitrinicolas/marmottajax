@@ -304,7 +304,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && this.xhr.contains(this.status)) {
+        if (this.readyState === 4 && this.xhr.okStatusCodes.contains(this.status)) {
 
             var result = this.responseText;
 
