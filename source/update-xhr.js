@@ -1,128 +1,128 @@
-
 /**
  * update-xhr.js
  *
- * Update XMLHttpRequest result 
+ * Update XMLHttpRequest result
  */
 
-marmottajax.prototype.updateXhr = function() {
+marmottajax.prototype.updateXhr = function () {
 
-	var data = {
+    var data = {
 
-		lastResult: this.xhr.lastResult,
+        lastResult: this.xhr.lastResult,
 
-		json: this.xhr.json,
-		binding: this.xhr.binding,
+        json: this.xhr.json,
+        binding: this.xhr.binding,
 
-		callbacks: {
+        callbacks: {
 
-			then: this.xhr.callbacks.then,
-			change: this.xhr.callbacks.change,
-			error: this.xhr.callbacks.error
+            then: this.xhr.callbacks.then,
+            change: this.xhr.callbacks.change,
+            error: this.xhr.callbacks.error
 
-		}
+        }
 
-	};
+    };
 
-	this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
-	this.xhr.lastResult = data.lastResult;
+    this.xhr.lastResult = data.lastResult;
 
-	this.xhr.json = data.json;
-	this.xhr.binding = data.binding;
+    this.xhr.json = data.json;
+    this.xhr.binding = data.binding;
 
-	this.xhr.callbacks = {
+    this.xhr.callbacks = {
 
-		then: data.callbacks.then,
-		change: data.callbacks.change,
-		error: data.callbacks.error
+        then: data.callbacks.then,
+        change: data.callbacks.change,
+        error: data.callbacks.error
 
-	};
+    };
 
-	this.xhr.call = function(categorie, result) {
+    this.xhr.call = function (categorie, result) {
 
-		for (var i = 0; i < this.callbacks[categorie].length; i++) {
+        for (var i = 0; i < this.callbacks[categorie].length; i++) {
 
-			if (typeof(this.callbacks[categorie][i]) === "function") {
+            if (typeof(this.callbacks[categorie][i]) === "function") {
 
-				if (this.binding) {
+                if (this.binding) {
 
-					this.callbacks[categorie][i].call(this.binding, result);
+                    this.callbacks[categorie][i].call(this.binding, result);
 
-				}
+                }
 
-				else {
+                else {
 
-					this.callbacks[categorie][i](result);
+                    this.callbacks[categorie][i](result);
 
-				}
+                }
 
-			}
+            }
 
-		}
+        }
 
-	};
+    };
 
-	this.xhr.onreadystatechange = function() {
+    this.xhr.onreadystatechange = function () {
 
-		if (this.readyState === 4 && this.status == 200) {
+        if (this.readyState === 4 && this.xhr.okStatusCodes.contains(this.status)) {
 
-			var result = this.responseText;
+            var result = this.responseText;
 
-			if (this.json) {
+            if (this.json) {
 
-				try {
+                try {
 
-					result = JSON.parse(result);
+                    result = JSON.parse(result);
 
-				}
+                }
 
-				catch (error) {
+                catch (error) {
 
-					this.call("error", "invalid json");
+                    this.call("error", "invalid json");
 
-					return false;
+                    return false;
 
-				}
+                }
 
-			}
+            }
 
-			isDifferent = this.lastResult != result;
+            isDifferent = this.lastResult != result;
 
-			try {
+            try {
 
-				isDifferent = (typeof this.lastResult !== "string" ? JSON.stringify(this.lastResult) : this.lastResult) != (typeof result !== "string" ? JSON.stringify(result) : result);
+                isDifferent = (typeof this.lastResult !== "string" ? JSON.stringify(this.lastResult) : this.lastResult) != (typeof result !== "string" ? JSON.stringify(result) : result);
 
-			}
+            }
 
-			catch (error) {}
+            catch (error) {
+            }
 
-			if (isDifferent) {
+            if (isDifferent) {
 
-				this.call("change", result);
+                this.call("change", result);
 
-			}
+            }
 
-			this.lastResult = result;
+            this.lastResult = result;
 
-		}
+        }
 
-		else if (this.readyState === 4 && this.status == 404) {
+        else if (this.readyState === 4 && this.status == 404) {
 
-			this.call("error", "404");
+            this.call("error", "404");
 
-		}
+        }
 
-		else if (this.readyState === 4) {
+        else if (this.readyState === 4) {
 
-			this.call("error", "unknow");
+            this.call("error", "unknow");
 
-		}
+        }
 
-	};
+    };
 
-	this.xhr.open(this.method, this.url, true);
-	this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	this.xhr.send(typeof postData != "undefined" ? postData : null);
+    this.xhr.open(this.method, this.url, true);
+    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    this.xhr.send(typeof postData != "undefined" ? postData : null);
 
 };
