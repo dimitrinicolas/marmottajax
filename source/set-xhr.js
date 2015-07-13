@@ -13,8 +13,6 @@ marmottajax.prototype.setXhr = function () {
     this.xhr.json = this.json;
     this.xhr.binding = null;
 
-    this.xhr.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
-
     this.bind = function (binding) {
 
         this.xhr.binding = binding;
@@ -85,7 +83,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && this.xhr.okStatusCodes.contains(this.status)) {
+        if (this.readyState === 4 && this.okStatusCodes.contains(this.status)) {
 
             var result = this.responseText;
 
