@@ -21,7 +21,6 @@ var marmottajax = function() {
 
 	}
 
-	this.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
 	this.url = data.url;
 	this.method = data.method;
 	this.json = data.json;
@@ -86,6 +85,8 @@ marmottajax.defaultData = {
 };
 
 marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
+marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
+
 
 /**
  * normalize-data.js
@@ -186,7 +187,7 @@ marmottajax.prototype.setWatcher = function () {
 
         this.watchIntervalFunction = function () {
 
-            if (this.xhr.readyState === 4 && this.okStatusCodes.contains(this.xhr.status)) {
+            if (this.xhr.readyState === 4 && marmottajax.okStatusCodes.contains(this.xhr.status)) {
 
                 this.updateXhr();
 
@@ -302,7 +303,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && this.okStatusCodes.contains(this.status)) {
+        if (this.readyState === 4 && marmottajax.okStatusCodes.contains(this.status)) {
 
             var result = this.responseText;
 

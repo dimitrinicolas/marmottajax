@@ -21,7 +21,6 @@ var marmottajax = function() {
 
 	}
 
-	this.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
 	this.url = data.url;
 	this.method = data.method;
 	this.json = data.json;

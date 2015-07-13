@@ -10,7 +10,7 @@ marmottajax.prototype.setWatcher = function () {
 
         this.watchIntervalFunction = function () {
 
-            if (this.xhr.readyState === 4 && this.okStatusCodes.contains(this.xhr.status)) {
+            if (this.xhr.readyState === 4 && marmottajax.okStatusCodes.contains(this.xhr.status)) {
 
                 this.updateXhr();
 
