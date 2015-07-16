@@ -16,3 +16,4 @@ marmottajax.defaultData = {
 };
 
 marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
+marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];

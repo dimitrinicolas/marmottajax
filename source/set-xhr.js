@@ -1,144 +1,143 @@
-
 /**
  * set-xhr.js
  *
- * Set XMLHttpRequest 
+ * Set XMLHttpRequest
  */
 
-marmottajax.prototype.setXhr = function() {
+marmottajax.prototype.setXhr = function () {
 
-	this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
-	this.xhr.lastResult = null;
+    this.xhr.lastResult = null;
 
-	this.xhr.json = this.json;
-	this.xhr.binding = null;
+    this.xhr.json = this.json;
+    this.xhr.binding = null;
 
-	this.bind = function(binding) {
+    this.bind = function (binding) {
 
-		this.xhr.binding = binding;
+        this.xhr.binding = binding;
 
-		return this;
+        return this;
 
-	};
+    };
 
-	this.cancel = function(callback) {
+    this.cancel = function (callback) {
 
-		this.xhr.abort();
+        this.xhr.abort();
 
-		return this;
+        return this;
 
-	};
+    };
 
-	this.xhr.callbacks = {
+    this.xhr.callbacks = {
 
-		then: [],
-		change: [],
-		error: []
+        then: [],
+        change: [],
+        error: []
 
-	};
+    };
 
-	for (var name in this.xhr.callbacks) {
+    for (var name in this.xhr.callbacks) {
 
-		if (this.xhr.callbacks.hasOwnProperty(name)) {
+        if (this.xhr.callbacks.hasOwnProperty(name)) {
 
-			this[name] = function(name) {
+            this[name] = function (name) {
 
-				return function(callback) {
+                return function (callback) {
 
-					this.xhr.callbacks[name].push(callback);
+                    this.xhr.callbacks[name].push(callback);
 
-					return this;
+                    return this;
 
-				};
+                };
 
-			}(name);
+            }(name);
 
-		}
+        }
 
-	}
+    }
 
-	this.xhr.call = function(categorie, result) {
+    this.xhr.call = function (categorie, result) {
 
-		for (var i = 0; i < this.callbacks[categorie].length; i++) {
+        for (var i = 0; i < this.callbacks[categorie].length; i++) {
 
-			if (typeof(this.callbacks[categorie][i]) === "function") {
+            if (typeof(this.callbacks[categorie][i]) === "function") {
 
-				if (this.binding) {
+                if (this.binding) {
 
-					this.callbacks[categorie][i].call(this.binding, result);
+                    this.callbacks[categorie][i].call(this.binding, result);
 
-				}
+                }
 
-				else {
+                else {
 
-					this.callbacks[categorie][i](result);
+                    this.callbacks[categorie][i](result);
 
-				}
+                }
 
-			}
+            }
 
-		}
+        }
 
-	};
+    };
 
-	this.xhr.onreadystatechange = function() {
+    this.xhr.onreadystatechange = function () {
 
-		if (this.readyState === 4 && this.status == 200) {
+        if (this.readyState === 4 && marmottajax.okStatusCodes.contains(this.status)) {
 
-			var result = this.responseText;
+            var result = this.responseText;
 
-			if (this.json) {
+            if (this.json) {
 
-				try {
+                try {
 
-					result = JSON.parse(result);
+                    result = JSON.parse(result);
 
-				}
+                }
 
-				catch (error) {
+                catch (error) {
 
-					this.call("error", "invalid json");
+                    this.call("error", "invalid json");
 
-					return false;
+                    return false;
 
-				}
+                }
 
-			}
+            }
 
-			this.lastResult = result;
+            this.lastResult = result;
 
-			this.call("then", result);
+            this.call("then", result);
 
-		}
+        }
 
-		else if (this.readyState === 4 && this.status == 404) {
+        else if (this.readyState === 4 && this.status == 404) {
 
-			this.call("error", "404");
+            this.call("error", "404");
 
-		}
+        }
 
-		else if (this.readyState === 4) {
+        else if (this.readyState === 4) {
 
-			this.call("error", "unknow");
+            this.call("error", "unknow");
 
-		}
+        }
 
-	};
+    };
 
-	this.xhr.open(this.method, this.url, true);
-	this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    this.xhr.open(this.method, this.url, true);
+    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-	if (this.headers) {
-		for (header in this.headers) {
-			if (this.headers.hasOwnProperty(header)) {
-		
-				this.xhr.setRequestHeader(header, this.headers[header]);
-		
-			}
-		}
-	}
+    if (this.headers) {
+        for (header in this.headers) {
+            if (this.headers.hasOwnProperty(header)) {
 
-	this.xhr.send(typeof this.postData != "undefined" ? this.postData : null);
+                this.xhr.setRequestHeader(header, this.headers[header]);
+
+            }
+        }
+    }
+
+    this.xhr.send(typeof this.postData != "undefined" ? this.postData : null);
 
 };
