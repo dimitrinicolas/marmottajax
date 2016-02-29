@@ -51,22 +51,9 @@ var marmottajax = function() {
 	this.parameters = data.parameters;
 	this.headers = data.headers;
 
-	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete") {
+	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete")
         
 		this.postData = serialize(this.parameters);
-        
-        
-        /*
-            for (var key in this.parameters)
-            {
-            if(!this.postData.length)
-            this.postData = '';
-            
-			this.postData += this.parameters.hasOwnProperty(key) ? (this.postData.length ? "&" : "" ) + key + "=" + this.parameters[key] : "";
-            }
-         */
-        
-	}
     
 	else {
         
