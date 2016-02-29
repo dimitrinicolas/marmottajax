@@ -17,9 +17,8 @@ var arr_contains = function(obj, to_find) {
           var str = [];
           for(var p in obj) {
             if (obj.hasOwnProperty(p)) {
-                    //  debugger
               var v = obj[p], is_obj = typeof v == "object",
-                  k = prefix ? prefix + "[" + (isNaN(+p) || is_obj ? p : '') + "]" : p; //(is_obj && !isNaN(+p) ? p : '')
+                  k = prefix ? prefix + "[" + (isNaN(+p) || is_obj ? p : '') + "]" : p;
               str.push(is_obj ?
                 serialize(v, k) :
                 encodeURIComponent(k) + "=" + encodeURIComponent(v));
@@ -59,11 +58,9 @@ var marmottajax = function() {
         
 		this.url += this.url.indexOf("?") < 0 ? "?" : "";
         
-		for (var key in this.parameters) {
+		for (var key in this.parameters)
             
-		    this.url += serialize(this.parameters)// this.parameters.hasOwnProperty(key) ? "&" + key + "=" + this.parameters[key] : "";
-            
-		}
+		    this.url += serialize(this.parameters)
         
 	}
 
