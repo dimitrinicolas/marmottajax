@@ -4,6 +4,28 @@
  *
  * Main librairy file
  */
+var arr_contains = function(obj, to_find) {
+        var i = obj.length;
+        while (i--) {
+            if (obj[i] === to_find) {
+                return true;
+            }
+        }
+        return false;
+    },
+    serialize = function(obj, prefix) {
+          var str = [];
+          for(var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+              var v = obj[p], is_obj = typeof v == "object",
+                  k = prefix ? prefix + "[" + (isNaN(+p) || is_obj ? p : '') + "]" : p;
+              str.push(is_obj ?
+                serialize(v, k) :
+                encodeURIComponent(k) + "=" + encodeURIComponent(v));
+            }
+          }
+          return str.join("&");
+    };
 
 var marmottajax = function() {
 
@@ -28,44 +50,24 @@ var marmottajax = function() {
 	this.parameters = data.parameters;
 	this.headers = data.headers;
 
-	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete") {
-
-		this.postData = "?";
-
-		for (var key in this.parameters) {
-
-			this.postData += this.parameters.hasOwnProperty(key) ? "&" + key + "=" + this.parameters[key] : "";
-
-		}
-
-	}
-
+	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete")
+        
+		this.postData = serialize(this.parameters);
+    
 	else {
-
+        
 		this.url += this.url.indexOf("?") < 0 ? "?" : "";
-
-		for (var key in this.parameters) {
-
-		    this.url += this.parameters.hasOwnProperty(key) ? "&" + key + "=" + this.parameters[key] : "";
-
-		}
-
+        
+		for (var key in this.parameters)
+            
+		    this.url += serialize(this.parameters)
+        
 	}
 
 	this.setXhr();
 
 	this.setWatcher();
 
-};
-
-Array.prototype.contains = function(obj) {
-	var i = this.length;
-	while (i--) {
-		if (this[i] === obj) {
-			return true;
-		}
-	}
-	return false;
 };
 module.exports = marmottajax;
 
@@ -188,7 +190,7 @@ marmottajax.prototype.setWatcher = function () {
 
         this.watchIntervalFunction = function () {
 
-            if (this.xhr.readyState === 4 && marmottajax.okStatusCodes.contains(this.xhr.status)) {
+            if (this.xhr.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.xhr.status)) {
 
                 this.updateXhr();
 
@@ -304,7 +306,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && marmottajax.okStatusCodes.contains(this.status)) {
+        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status)) {
 
             var result = this.responseText;
 
@@ -428,7 +430,7 @@ marmottajax.prototype.updateXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && marmottajax.okStatusCodes.contains(this.status)) {
+        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status)) {
 
             var result = this.responseText;
 
