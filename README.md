@@ -61,6 +61,26 @@ var watcher = new marmottajax({
 setTimeout(function() {
     watcher.changeTime(1000);
 }, 800);
+
+
+/**
+ * Pass complex data
+ */
+
+ marmottajax({
+    url: "/post.asm",
+    method: "post",
+    parameters: {
+        love: {
+            animal: 'Marmotte',
+            action: "stroke"
+        },
+        hate: ['ie6', 'ie7', 'one, who framed Roger Rabbit']
+    }
+}).then(function(responce_data) {
+    // result
+})
+ 
 ```
 
 ## Contributing
@@ -72,6 +92,7 @@ MarmottAjax requires some development dependencies :
  - And some modules : `npm i`
 
  - Start `gulp` command and you can start to edit the code
+ - Start `gulp requirejs --modulename` command for generate requirejs module wi name = `modulename`
 
 ## License
 
