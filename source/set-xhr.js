@@ -126,18 +126,15 @@ marmottajax.prototype.setXhr = function () {
     };
 
     this.xhr.open(this.method, this.url, true);
-    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    if (this.headers) {
-        for (header in this.headers) {
-            if (this.headers.hasOwnProperty(header)) {
+    if(this.type!='file')
+        this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
 
+
+    if (this.headers)
+        for (header in this.headers)
+            if (this.headers.hasOwnProperty(header))
                 this.xhr.setRequestHeader(header, this.headers[header]);
 
-            }
-        }
-    }
-
-    this.xhr.send(typeof this.postData != "undefined" ? this.postData : null);
-
+    this.xhr.send(this.postData ? this.postData : null);
 };
