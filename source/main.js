@@ -54,7 +54,7 @@ marmottajax = function()    // MAIN
     extend(this, data);
 
 
-    if(this.type == 'file')
+    if(this.method == 'file')
     {
         // Single file uploading. IE9+
         
@@ -71,14 +71,15 @@ marmottajax = function()    // MAIN
         this.data = this.data.files[0];
         
         formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
+
         this.postData = formData
     }
         else
     {
         if (this.method.toUpperCase() != 'GET')
-        this.postData = serialize(this.parameters);
+            this.postData = serialize(this.parameters);
         else
-        this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
     }
     
 
