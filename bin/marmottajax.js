@@ -1,73 +1,66 @@
-define("lib/marmottajax",function(){
+;var marmottajax = (function(){
 /**
  * main.js
  *
  * Main librairy file
  */
-var arr_contains = function(obj, to_find) {
-        var i = obj.length;
-        while (i--) {
-            if (obj[i] === to_find) {
-                return true;
-            }
+
+var arr_contains = function(obj, to_find)
+{
+    var i = obj.length;
+    while (i--) {
+        if (obj[i] === to_find) {
+            return true;
         }
-        return false;
-    },
-    serialize = function(obj, prefix) {
-          var str = [];
-          for(var p in obj) {
-            if (obj.hasOwnProperty(p)) {
-              var v = obj[p], is_obj = typeof v == "object",
-                  k = prefix ? prefix + "[" + (isNaN(+p) || is_obj ? p : '') + "]" : p;
-              str.push(is_obj ?
-                serialize(v, k) :
-                encodeURIComponent(k) + "=" + encodeURIComponent(v));
-            }
-          }
-          return str.join("&");
-    };
+    }
+    return false;
+},
 
-var marmottajax = function() {
+extend = function(o1, o2)   // Two objects, !! writes to o1 !!
+{
+    for(var p in o2)
+        o1[p] = o2[p]
+},
 
-	if (typeof this.self !== "undefined") {
+serialize = function(obj, prefix)
+{
+    var p, str = [];
+    for(p in obj)
+    {
+      if (obj.hasOwnProperty(p))
+      {
+        var v = obj[p], is_obj = typeof v == "object",
+            k = prefix ? prefix + "[" + (isNaN(+p) || is_obj ? p : '') + "]" : p;
+        str.push(is_obj ?
+          serialize(v, k) :
+            encodeURIComponent(k) + "=" + encodeURIComponent(v));
+      }
+    }
+    return str.join("&");
+},
 
+
+marmottajax = function()    // MAIN
+{
+	if (this.self)
 		return new marmottajax(marmottajax.normalize(arguments));
 
-	}
 
 	var data = marmottajax.normalize(arguments);
 
-	if (data === null) {
+	if (data === null)
+		throw "Invalid arguments";
 
-		throw "Les arguments passées à marmottajax sont invalides.";
+    extend(this, data);
 
-	}
-
-	this.url = data.url;
-	this.method = data.method;
-	this.json = data.json;
-	this.watch = data.watch;
-	this.parameters = data.parameters;
-	this.headers = data.headers;
-
-	if (this.method === "post" || this.method === "put" || this.method === "update" || this.method === "delete")
-        
+	if (this.method.toUpperCase() != 'GET')
 		this.postData = serialize(this.parameters);
-    
-	else {
-        
-		this.url += this.url.indexOf("?") < 0 ? "?" : "";
-        
-		for (var key in this.parameters)
-            
-		    this.url += serialize(this.parameters)
-        
-	}
+	else
+		this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+
 
 	this.setXhr();
-
 	this.setWatcher();
-
 };
 
 /**
@@ -514,4 +507,4 @@ marmottajax.prototype.watcherTimeout = function() {
 
 	}
 
-};;return marmottajax;})
+};;return marmottajax; })();

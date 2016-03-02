@@ -9,15 +9,15 @@ var rename = require("gulp-rename")
 var whatchado = 'default',
     to_inject = function()
     {
-        var wrappers = [
-                // 'define("marmottajax",function(){',
-                'define("lib/marmottajax",function(){',
-                ';return marmottajax;})'];
+        var module_name = (process.argv[3] && process.argv[3].slice(2)) || 'lib/marmottajax',
+            wrappers = [
+                'define("'+module_name+'", function() {',
+                ';return marmottajax; })'];
 
         if(whatchado=='requirejs')
             return wrappers
 
-        return ['', ''];
+        return [';var marmottajax = (function(){', ';return marmottajax; })();'];
     }
 
 gulp.task("compile", function () {
