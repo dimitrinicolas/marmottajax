@@ -79,7 +79,28 @@ setTimeout(function() {
         },
         hate: ['ie6', 'ie7', 'one, who framed Roger Rabbit']
     }
-}).then(function(responce_data) {
+}).then(function(response_data) {
+    // result
+})
+ 
+```
+
+
+
+/**
+ * Pass a file. Workis like the same as in jQuery, but lighter.
+ * IE9+ in theory. Tested in Chrome.
+ */
+
+ var file_in_DOM = document.querySelector('input[type="file"]')
+
+ marmottajax({
+    url: "/file_uload.rb",
+    method: "file",
+    data: file_in_DOM,
+    filename: 'the_image'   // Optional! If not presented, uses just 'file' automatically.
+
+}).then(function(response_data) {
     // result
 })
  
