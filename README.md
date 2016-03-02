@@ -1,5 +1,5 @@
 # MarmottAjax
-> Ajax requests intelligent library
+> Ajax actions intelligent library
 
 Thank's a lot to [Michael (houd1ni)](https://github.com/houd1ni) who contributes greatly to the development !
 
@@ -7,7 +7,7 @@ Thank's a lot to [Michael (houd1ni)](https://github.com/houd1ni) who contributes
 
 ## Usage
 
-The different methods that can be used with this library are: `get`,` post`, `put`, `update` and `delete`.
+The different methods that can be used with this library are: `get`,` post`, `put`, `update`, `delete` AND `file` to upload a single file asynchronously!
 
 *Samples*
 ```javascript
