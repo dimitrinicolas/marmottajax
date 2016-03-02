@@ -1,6 +1,8 @@
 # MarmottAjax
 > Ajax requests intelligent library
 
+Thank's a lot to [Michael (houd1ni)](https://github.com/houd1ni) who contributes greatly to the development !
+
 ![Logo](image.jpg "logo")
 
 ## Usage
