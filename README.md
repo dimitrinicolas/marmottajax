@@ -82,8 +82,6 @@ setTimeout(function() {
 }).then(function(response_data) {
     // result
 })
- 
-```
 
 
 
