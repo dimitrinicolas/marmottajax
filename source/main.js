@@ -53,11 +53,35 @@ marmottajax = function()    // MAIN
 
     extend(this, data);
 
-	if (this.method.toUpperCase() != 'GET')
-		this.postData = serialize(this.parameters);
-	else
-		this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
 
+    if(this.method == 'file')
+    {
+        // Single file uploading. IE9+
+        
+        if(!(this.data instanceof HTMLElement))
+        {
+            throw "Invalid file";
+            return;
+        }
+        
+        this.method = 'POST'
+        
+        var formData  = new FormData()
+        
+        this.data = this.data.files[0];
+        
+        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
+
+        this.postData = formData
+    }
+        else
+    {
+        if (this.method.toUpperCase() != 'GET')
+            this.postData = serialize(this.parameters);
+        else
+            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+    }
+    
 
 	this.setXhr();
 	this.setWatcher();

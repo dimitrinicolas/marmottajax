@@ -53,11 +53,35 @@ marmottajax = function()    // MAIN
 
     extend(this, data);
 
-	if (this.method.toUpperCase() != 'GET')
-		this.postData = serialize(this.parameters);
-	else
-		this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
 
+    if(this.method == 'file')
+    {
+        // Single file uploading. IE9+
+        
+        if(!(this.data instanceof HTMLElement))
+        {
+            throw "Invalid file";
+            return;
+        }
+        
+        this.method = 'POST'
+        
+        var formData  = new FormData()
+        
+        this.data = this.data.files[0];
+        
+        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
+
+        this.postData = formData
+    }
+        else
+    {
+        if (this.method.toUpperCase() != 'GET')
+            this.postData = serialize(this.parameters);
+        else
+            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+    }
+    
 
 	this.setXhr();
 	this.setWatcher();
@@ -342,20 +366,17 @@ marmottajax.prototype.setXhr = function () {
     };
 
     this.xhr.open(this.method, this.url, true);
-    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    if (this.headers) {
-        for (header in this.headers) {
-            if (this.headers.hasOwnProperty(header)) {
+    if(this.method!='file')
+        this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
 
+
+    if (this.headers)
+        for (header in this.headers)
+            if (this.headers.hasOwnProperty(header))
                 this.xhr.setRequestHeader(header, this.headers[header]);
 
-            }
-        }
-    }
-
-    this.xhr.send(typeof this.postData != "undefined" ? this.postData : null);
-
+    this.xhr.send(this.postData ? this.postData : null);
 };
 /**
  * update-xhr.js
@@ -482,7 +503,7 @@ marmottajax.prototype.updateXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
     this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    this.xhr.send(typeof postData != "undefined" ? postData : null);
+    this.xhr.send(postData ? postData : null);
 
 };
 
