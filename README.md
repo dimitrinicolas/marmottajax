@@ -24,7 +24,7 @@ Signatures:
 ```javascript
 marmottajax('url')
 marmottajax({url: '/some_url'})
-marmottajax({url: '/some_url', method: 'POST'})
+marmottajax({url: '/some_url', method: 'POST', parameters: {a:1, b:{c:1, d:7}, e:[1,2,3]})  // Query string or POST parameters.
 marmottajax({url: '/some_url', method: 'GET', json: true, watch: 200}).change(function(new_data){}) // Watching for a file/data.
 marmottajax({url: '/some_url', parameters: document.querySelector('#fileupload')})
 marmottajax({parameters: document.querySelector('form')})   // Url will be taken from `action` attribute, if `url` isn't passed.
