@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/dimitrinicolas/marmottajax](https://badges.gitter.im/dimitrinicolas/marmottajax.svg)](https://gitter.im/dimitrinicolas/marmottajax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > Ajax actions intelligent library
 
-> Our philosophy: library should not be combain. It should do one thing and do it perfect.
+> Our philosophy: library should not be a combain. It should do one thing and do it perfect.
 > And it is client-side JS. It should be small as it can be.
 
 Thank's a lot to [Michael (houd1ni)](https://github.com/houd1ni) who contributes greatly to the development !
