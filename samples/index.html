@@ -16,6 +16,21 @@
 
         <h2>Check the source code</h2>
 
+        <form action='/' id='formupload'>
+            <input type='text' name='in1'></input>
+            <input type='text' name='in2'></input>
+            <input type='submit' value='Submit form'></input>
+        </form>
+        
+        <form action='/' class='marmottajax'>
+            <input type='text' name='in1'></input>
+            <input type='text' name='in2'></input>
+            <input type='submit' value='Submit form'></input>
+        </form>
+        
+        <br>
+        <input type='file' id="fileupload"></input>
+        <br>
         <div id="console"></div>
     
         <script>
@@ -54,14 +69,14 @@
 
                 }
 
-            }).then(function(result) {
-
-                update_console("Success to post to `post.php`");
-
-            }).error(function(message) {
-
+            })
+            .then(function(result)
+            {
+                update_console("Success to post to `post.php`")
+            })
+            .error(function(message)
+            {
                 update_console("<i style=\"color: red\">Error when posting to `post.php`</i>")
-
             });
 
             /**
@@ -73,11 +88,12 @@
         		url: get_url("data.json"),
                 json: true
 
-        	}).then(function(result) {
-
+        	})
+            .then(function(result)
+            {
                 update_console("Get `data.json` : " + JSON.stringify(result))
-
-            }).bind(document.getElementById("console"));
+            })
+            .bind(document.getElementById("console"));
             
             /**
              * With setted headers
@@ -90,13 +106,12 @@
                 headers: {
 
                     "Accept": "text/xml"
-
                 }
 
-            }).then(function(result) {
-
-                update_console("`headers.php` result : " + result);
-
+            })
+            .then(function(result)
+            {
+                update_console("`headers.php` result : " + result)
             });
 
             /**
@@ -109,19 +124,70 @@
                 json: true,
                 watch: 200
 
-            }).change(function(result) {
-
-                update_console("Detected changes on `data.json` : " + JSON.stringify(result));
-
+            })
+            .change(function(result)
+            {
+                update_console("Detected changes on `data.json` : " + JSON.stringify(result))
             });
 
             // Change interval time of `watcher`
 
-            setTimeout(function() {
-
-                watcher.changeTime(1000);
-
+            setTimeout(function()
+            {
+                watcher.changeTime(1000000)
             }, 800);
+            
+            
+            /**
+             * Sends a file
+             */
+            document.querySelector('#fileupload').onchange = function()
+            {
+                marmottajax({
+                    
+                    url: get_url("file.php"),
+                    parameters: document.querySelector('#fileupload')
+                    
+                })
+                .then(function(result)
+                {
+                    update_console("File sent!" + result)
+                });
+            }
+            
+            /**
+             * Sends a form
+             */
+            var form = document.querySelector('#formupload')
+            form.action = get_url("form.php")
+
+            form.onsubmit = function(e)
+            {
+                e.preventDefault();
+                marmottajax({
+                    
+                    // url: get_url("form.php"),    // If not presented, use action attribute
+                    parameters: form
+                    
+                })
+                .then(function(result)
+                {
+                    update_console("Form sent!  " + result)
+                });
+            }
+            
+            /**
+             * Sends a form automatically
+             */
+            document.querySelector('.marmottajax').action = get_url("form.php")
+
+            
+            marmottajax({ajax_forms_in: document, 
+                success: function(result)
+                {
+                    update_console("Form sent!  " + result)
+                }
+            })
 
         </script>
 

@@ -4,7 +4,9 @@
  * Set XMLHttpRequest
  */
 
-marmottajax.prototype.setXhr = function () {
+marmottajax.prototype.setXhr = function ()
+{
+    var main = this
 
     this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
@@ -97,6 +99,7 @@ marmottajax.prototype.setXhr = function () {
                 catch (error)
                 {
                     this.call("error", "invalid json");
+                    main.error("invalid json")
                     return false;
                 }
             }
@@ -104,17 +107,20 @@ marmottajax.prototype.setXhr = function () {
             this.lastResult = result;
 
             this.call("then", result);
+            main.success(result)
         }
 
         else if (this.readyState === 4 && this.status == 404) {
 
             this.call("error", "404");
+            main.error('unknown error')
 
         }
 
         else if (this.readyState === 4) {
 
-            this.call("error", "unknow");
+            this.call("error", "unknown");
+            main.error('unknown error')
 
         }
 
@@ -124,7 +130,7 @@ marmottajax.prototype.setXhr = function () {
 
     if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
-
+    
 
     for (header in this.headers)
         if (this.headers.hasOwnProperty(header))

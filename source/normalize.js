@@ -14,18 +14,34 @@ marmottajax.normalize = function(data)
 
 	if (typeof data != 'object')
 		return null;
+
     data = data[0] || data
-    
+
+
 	var data_method, param,
-        result  = {url: data.url || data},
+        request_params = data.parameters, 
+        result  = {url: typeof data == 'string' ? data : data.url},
         typemap = {
             json:       'string',
             watch:      'number',
             parameters: 'object',
-            headers:    'object'
+            headers:    'object',
+            success:    'function',
+            error:      'function'
         }
     
+    if(is_html(request_params))
+    {
+        result.is_html = true
+        result.is_form = request_params.matches('form')
+    }
+        else if(is_html(data))  // Pure form
+    {
+        data = {parameters: data}
+    }
     
+    result.where = data.ajax_forms_in
+
 	/**
 	 * Normalize data in arguments
 	 */
@@ -36,7 +52,7 @@ marmottajax.normalize = function(data)
 
     
     for(param in typemap)
-        result[param] = (typeof data[param]===typemap[param]) ? data[param] : marmottajax.defaults[param]
+        result[param] = (typeof data[param]==typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
 };

@@ -12,9 +12,11 @@ marmottajax.defaults = {
 	watch: -1,
 
 	parameters: {},
-	headers: {}
+	headers: {},
+	success: function(){},
+	error: function(){}
 
 };
 
-marmottajax.validMethods = ["get", "post", "put", "update", "delete", "form"];
+marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
 marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];

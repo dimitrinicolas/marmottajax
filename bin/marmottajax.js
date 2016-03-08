@@ -39,7 +39,19 @@ serialize = function(obj, prefix)
     return str.join("&");
 },
 
-marmottajax = function(params)    // MAIN
+is_html = function(e)
+{
+    return e instanceof HTMLElement
+},
+
+each = function(arr, f)
+{
+    for(var k in arr)
+        if(arr.hasOwnProperty(k))
+            f(arr[k])
+},
+
+marmottajax = function(common_params)    // MAIN
 {
     if(this.self)
         return new marmottajax(arguments)
@@ -47,7 +59,7 @@ marmottajax = function(params)    // MAIN
 	var tmp, form,
         t = this,
         is_empty_params = true,
-        data = marmottajax.normalize(params)
+        data = marmottajax.normalize(common_params)
         
 
 	if (data === null)
@@ -55,20 +67,39 @@ marmottajax = function(params)    // MAIN
 
     extend(t, data)
     
+    
+    if(t.where)
+        return each(t.where.querySelectorAll('.marmottajax'), function(el)
+        {
+            el.onsubmit = function(e)
+            {
+                e.preventDefault();
+                data = {
+                    url: el.action,
+                    formpassed: true,
+                    parameters: el,
+                    success: t.success,
+                    error: t.error
+                }
+                new marmottajax(data)
+            }
+        })
+
+    data = data.parameters
+    
     for(tmp in t.parameters)
         is_empty_params = false
 
-    if(t.method == 'form')
+    if(t.is_html)
     {
         // Files and forms uploading.
 
+        var is_input = data.matches('input[type="file"]')
         
-        if(!(data instanceof HTMLElement &&
-            (is_input || data.matches('form'))))
+        
+        if(!(is_input || t.is_form))
                 throw "Invalid form";
 
-
-        var is_input = data.matches('input[name]')
         
         t.method = 'post'
         t.isform = true
@@ -82,9 +113,6 @@ marmottajax = function(params)    // MAIN
             form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
 
         t.postData = form
-
-        // formData.append((t.filename || 'file'), data);    // ONLY ONE now
-
     }
         else
     {
@@ -112,11 +140,13 @@ marmottajax.defaults = {
 	watch: -1,
 
 	parameters: {},
-	headers: {}
+	headers: {},
+	success: function(){},
+	error: function(){}
 
 };
 
-marmottajax.validMethods = ["get", "post", "put", "update", "delete", "form"];
+marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
 marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
 
 
@@ -135,18 +165,34 @@ marmottajax.normalize = function(data)
 
 	if (typeof data != 'object')
 		return null;
+
     data = data[0] || data
-    
+
+
 	var data_method, param,
-        result  = {url: data.url || data},
+        request_params = data.parameters, 
+        result  = {url: typeof data == 'string' ? data : data.url},
         typemap = {
             json:       'string',
             watch:      'number',
             parameters: 'object',
-            headers:    'object'
+            headers:    'object',
+            success:    'function',
+            error:      'function'
         }
     
+    if(is_html(request_params))
+    {
+        result.is_html = true
+        result.is_form = request_params.matches('form')
+    }
+        else if(is_html(data))  // Pure form
+    {
+        data = {parameters: data}
+    }
     
+    result.where = data.ajax_forms_in
+
 	/**
 	 * Normalize data in arguments
 	 */
@@ -157,7 +203,7 @@ marmottajax.normalize = function(data)
 
     
     for(param in typemap)
-        result[param] = (typeof data[param]===typemap[param]) ? data[param] : marmottajax.defaults[param]
+        result[param] = (typeof data[param]==typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
 };
@@ -210,7 +256,9 @@ marmottajax.prototype.setWatcher = function () {
  * Set XMLHttpRequest
  */
 
-marmottajax.prototype.setXhr = function () {
+marmottajax.prototype.setXhr = function ()
+{
+    var main = this
 
     this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
@@ -303,6 +351,7 @@ marmottajax.prototype.setXhr = function () {
                 catch (error)
                 {
                     this.call("error", "invalid json");
+                    main.error("invalid json")
                     return false;
                 }
             }
@@ -310,17 +359,20 @@ marmottajax.prototype.setXhr = function () {
             this.lastResult = result;
 
             this.call("then", result);
+            main.success(result)
         }
 
         else if (this.readyState === 4 && this.status == 404) {
 
             this.call("error", "404");
+            main.error('unknown error')
 
         }
 
         else if (this.readyState === 4) {
 
-            this.call("error", "unknow");
+            this.call("error", "unknown");
+            main.error('unknown error')
 
         }
 
@@ -330,7 +382,7 @@ marmottajax.prototype.setXhr = function () {
 
     if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
-
+    
 
     for (header in this.headers)
         if (this.headers.hasOwnProperty(header))

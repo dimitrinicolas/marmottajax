@@ -39,7 +39,19 @@ serialize = function(obj, prefix)
     return str.join("&");
 },
 
-marmottajax = function(params)    // MAIN
+is_html = function(e)
+{
+    return e instanceof HTMLElement
+},
+
+each = function(arr, f)
+{
+    for(var k in arr)
+        if(arr.hasOwnProperty(k))
+            f(arr[k])
+},
+
+marmottajax = function(common_params)    // MAIN
 {
     if(this.self)
         return new marmottajax(arguments)
@@ -47,7 +59,7 @@ marmottajax = function(params)    // MAIN
 	var tmp, form,
         t = this,
         is_empty_params = true,
-        data = marmottajax.normalize(params)
+        data = marmottajax.normalize(common_params)
         
 
 	if (data === null)
@@ -55,20 +67,39 @@ marmottajax = function(params)    // MAIN
 
     extend(t, data)
     
+    
+    if(t.where)
+        return each(t.where.querySelectorAll('.marmottajax'), function(el)
+        {
+            el.onsubmit = function(e)
+            {
+                e.preventDefault();
+                data = {
+                    url: el.action,
+                    formpassed: true,
+                    parameters: el,
+                    success: t.success,
+                    error: t.error
+                }
+                new marmottajax(data)
+            }
+        })
+
+    data = data.parameters
+    
     for(tmp in t.parameters)
         is_empty_params = false
 
-    if(t.method == 'form')
+    if(t.is_html)
     {
         // Files and forms uploading.
 
+        var is_input = data.matches('input[type="file"]')
         
-        if(!(data instanceof HTMLElement &&
-            (is_input || data.matches('form'))))
+        
+        if(!(is_input || t.is_form))
                 throw "Invalid form";
 
-
-        var is_input = data.matches('input[name]')
         
         t.method = 'post'
         t.isform = true
@@ -82,9 +113,6 @@ marmottajax = function(params)    // MAIN
             form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
 
         t.postData = form
-
-        // formData.append((t.filename || 'file'), data);    // ONLY ONE now
-
     }
         else
     {
