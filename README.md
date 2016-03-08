@@ -9,7 +9,27 @@ Thank's a lot to [Michael (houd1ni)](https://github.com/houd1ni) who contributes
 
 ## Usage
 
-The different methods that can be used with this library are: `get`,` post`, `put`, `update`, `delete` AND `file` to upload a single file asynchronously!
+The different methods that can be used with this library are: `get`,` post`, `put`, `update`, `delete`.
+
+Has two builds: as AMD module or just as a variable. See more in the bottom.
+
+You also can pass just file input or form DOMElement, or even any DOMElement, where '.marmottajax' could be found, which will be ajax forms.
+
+Signatures:
+```javascript
+marmottajax('url')
+marmottajax({url: '/some_url'})
+marmottajax({url: '/some_url', method: 'POST'})
+marmottajax({url: '/some_url', method: 'GET', json: true, watch: 200}).change(function(new_data){}) // Watching for a file/data.
+marmottajax({url: '/some_url', parameters: document.querySelector('#fileupload')})
+marmottajax({parameters: document.querySelector('form')})   // Url will be taken from `action` attribute, if `url` isn't passed.
+marmottajax({ajax_forms_in: document.querySelector('div#several_forms'), success: function(){}})   // Only `success`, not `then`!
+
+/* All except the last one can be declared with `.then`, `.error` Promises and `success`, `error` parameters on your taste.
+    If both are presented, both will be invoked.
+*/
+
+```
 
 *Samples*
 ```javascript
