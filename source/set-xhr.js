@@ -127,7 +127,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
 
-    if(this.method!='file')
+    if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
 
 

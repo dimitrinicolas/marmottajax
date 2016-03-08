@@ -11,78 +11,31 @@ marmottajax.normalize = function(data) {
 	 * Search data in arguments
 	 */
 
-	if (data.length === 0) {
-
+	if (!data.length)
 		return null;
-
-	}
-
-	var result = {};
-
-	if (data.length === 1 && typeof data[0] === "object") {
-
-		result = data[0];
-
-	}
-
-	else if (data.length === 1 && typeof data[0] === "string") {
-
-		result = {
-
-			url: data[0]
-
-		};
-
-	}
-
-	else if (data.length === 2 && typeof data[0] === "string" && typeof data[1] === "object") {
-
-		data[1].url = data[0];
-
-		result = data[1];
-
-	}
-
+    data = data[0]
+    
+	var data_method, param,
+        result  = {url: data.url},
+        typemap = {
+            json:       'string',
+            watch:      'number',
+            parameters: 'object',
+            headers:    'object'
+        }
+    
+    
 	/**
 	 * Normalize data in arguments
 	 */
+    
+    data_method = (typeof data.method == 'string') ? data.method.toLowerCase() : 0;
+    data_method = !!~marmottajax.validMethods.indexOf(data_method) ? data_method : marmottajax.defaults.method;
+    result.method = data_method
 
-	if (!(typeof result.method === "string" && marmottajax.validMethods.indexOf(result.method.toLowerCase()) != -1)) {
-
-		result.method = marmottajax.defaultData.method;
-
-	}
-
-	else {
-
-		result.method = result.method.toLowerCase();
-
-	}
-
-	if (typeof result.json !== "boolean") {
-
-		result.json = marmottajax.defaultData.json;
-
-	}
-
-	if (typeof result.watch !== "number") {
-
-		result.watch = marmottajax.defaultData.watch;
-
-	}
-
-	if (typeof result.parameters !== "object") {
-
-		result.parameters = marmottajax.defaultData.parameters;
-
-	}
-
-	if (typeof result.headers !== "object") {
-
-		result.headers = marmottajax.defaultData.headers;
-
-	}
+    
+    for(param in typemap)
+        result[param] = (typeof data[param]===typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
-
 };

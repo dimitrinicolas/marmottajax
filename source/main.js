@@ -40,49 +40,62 @@ serialize = function(obj, prefix)
 },
 
 
-marmottajax = function()    // MAIN
+marmottajax = function(params)    // MAIN
 {
-	if (this.self)
-		return new marmottajax(marmottajax.normalize(arguments));
-
-
-	var data = marmottajax.normalize(arguments);
+    if(this.self)
+        return new marmottajax(arguments)
+    
+	var tmp, form,
+        t = this,
+        is_empty_params = true,
+        data = marmottajax.normalize(params)
+        
 
 	if (data === null)
 		throw "Invalid arguments";
 
-    extend(this, data);
+    extend(t, data)
+    
+    for(tmp in t.parameters)
+        is_empty_params = false
 
-
-    if(this.method == 'file')
+    if(t.method == 'form')
     {
         // Single file uploading. IE9+
-        
-        if(!(this.data instanceof HTMLElement))
-        {
-            throw "Invalid file";
-            return;
-        }
-        
-        this.method = 'POST'
-        
-        var formData  = new FormData()
-        
-        this.data = this.data.files[0];
-        
-        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
 
-        this.postData = formData
+        
+        if(!(data instanceof HTMLElement &&
+            (is_input || data.matches('form'))))
+                throw "Invalid form";
+
+
+        var is_input = data.matches('input[name]')
+        
+        t.method = 'post'
+        t.isform = true
+        
+        if(!t.url)
+            t.url = data.action
+
+        form = new FormData(data)
+        
+        if(is_input)
+            form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
+
+        t.postData = form
+
+        // formData.append((t.filename || 'file'), data);    // ONLY ONE now
+
     }
         else
     {
-        if (this.method.toUpperCase() != 'GET')
-            this.postData = serialize(this.parameters);
+        if (t.method.toUpperCase() != 'GET')
+            t.postData = serialize(t.parameters);
         else
-            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+            t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     
 
-	this.setXhr();
-	this.setWatcher();
+	t.setXhr();
+	t.setWatcher();
 };

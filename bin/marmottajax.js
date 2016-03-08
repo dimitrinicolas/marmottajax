@@ -40,51 +40,64 @@ serialize = function(obj, prefix)
 },
 
 
-marmottajax = function()    // MAIN
+marmottajax = function(params)    // MAIN
 {
-	if (this.self)
-		return new marmottajax(marmottajax.normalize(arguments));
-
-
-	var data = marmottajax.normalize(arguments);
+    if(this.self)
+        return new marmottajax(arguments)
+    
+	var tmp, form,
+        t = this,
+        is_empty_params = true,
+        data = marmottajax.normalize(params)
+        
 
 	if (data === null)
 		throw "Invalid arguments";
 
-    extend(this, data);
+    extend(t, data)
+    
+    for(tmp in t.parameters)
+        is_empty_params = false
 
-
-    if(this.method == 'file')
+    if(t.method == 'form')
     {
         // Single file uploading. IE9+
-        
-        if(!(this.data instanceof HTMLElement))
-        {
-            throw "Invalid file";
-            return;
-        }
-        
-        this.method = 'POST'
-        
-        var formData  = new FormData()
-        
-        this.data = this.data.files[0];
-        
-        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
 
-        this.postData = formData
+        
+        if(!(data instanceof HTMLElement &&
+            (is_input || data.matches('form'))))
+                throw "Invalid form";
+
+
+        var is_input = data.matches('input[name]')
+        
+        t.method = 'post'
+        t.isform = true
+        
+        if(!t.url)
+            t.url = data.action
+
+        form = new FormData(data)
+        
+        if(is_input)
+            form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
+
+        t.postData = form
+
+        // formData.append((t.filename || 'file'), data);    // ONLY ONE now
+
     }
         else
     {
-        if (this.method.toUpperCase() != 'GET')
-            this.postData = serialize(this.parameters);
+        if (t.method.toUpperCase() != 'GET')
+            t.postData = serialize(t.parameters);
         else
-            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+            t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     
 
-	this.setXhr();
-	this.setWatcher();
+	t.setXhr();
+	t.setWatcher();
 };
 
 /**
@@ -93,17 +106,18 @@ marmottajax = function()    // MAIN
  * Constants variables
  */
 
-marmottajax.defaultData = {
+marmottajax.defaults = {
 
 	method: "get",
 	json: false,
 	watch: -1,
 
-	parameters: {}
+	parameters: {},
+	headers: {}
 
 };
 
-marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
+marmottajax.validMethods = ["get", "post", "put", "update", "delete", "form"];
 marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
 
 
@@ -119,80 +133,33 @@ marmottajax.normalize = function(data) {
 	 * Search data in arguments
 	 */
 
-	if (data.length === 0) {
-
+	if (!data.length)
 		return null;
-
-	}
-
-	var result = {};
-
-	if (data.length === 1 && typeof data[0] === "object") {
-
-		result = data[0];
-
-	}
-
-	else if (data.length === 1 && typeof data[0] === "string") {
-
-		result = {
-
-			url: data[0]
-
-		};
-
-	}
-
-	else if (data.length === 2 && typeof data[0] === "string" && typeof data[1] === "object") {
-
-		data[1].url = data[0];
-
-		result = data[1];
-
-	}
-
+    data = data[0]
+    
+	var data_method, param,
+        result  = {url: data.url},
+        typemap = {
+            json:       'string',
+            watch:      'number',
+            parameters: 'object',
+            headers:    'object'
+        }
+    
+    
 	/**
 	 * Normalize data in arguments
 	 */
+    
+    data_method = (typeof data.method == 'string') ? data.method.toLowerCase() : 0;
+    data_method = !!~marmottajax.validMethods.indexOf(data_method) ? data_method : marmottajax.defaults.method;
+    result.method = data_method
 
-	if (!(typeof result.method === "string" && marmottajax.validMethods.indexOf(result.method.toLowerCase()) != -1)) {
-
-		result.method = marmottajax.defaultData.method;
-
-	}
-
-	else {
-
-		result.method = result.method.toLowerCase();
-
-	}
-
-	if (typeof result.json !== "boolean") {
-
-		result.json = marmottajax.defaultData.json;
-
-	}
-
-	if (typeof result.watch !== "number") {
-
-		result.watch = marmottajax.defaultData.watch;
-
-	}
-
-	if (typeof result.parameters !== "object") {
-
-		result.parameters = marmottajax.defaultData.parameters;
-
-	}
-
-	if (typeof result.headers !== "object") {
-
-		result.headers = marmottajax.defaultData.headers;
-
-	}
+    
+    for(param in typemap)
+        result[param] = (typeof data[param]===typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
-
 };
 /**
  * set-xhr.js
@@ -366,7 +333,7 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
 
-    if(this.method!='file')
+    if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
 
 
@@ -501,7 +468,10 @@ marmottajax.prototype.updateXhr = function () {
     };
 
     this.xhr.open(this.method, this.url, true);
-    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    
+    if(!this.isform)
+        this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    
     this.xhr.send(postData ? postData : null);
 
 };
@@ -528,4 +498,4 @@ marmottajax.prototype.watcherTimeout = function() {
 
 	}
 
-};;return marmottajax; })();
+};return marmottajax; })();
