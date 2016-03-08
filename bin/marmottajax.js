@@ -39,52 +39,92 @@ serialize = function(obj, prefix)
     return str.join("&");
 },
 
-
-marmottajax = function()    // MAIN
+is_html = function(e)
 {
-	if (this.self)
-		return new marmottajax(marmottajax.normalize(arguments));
+    return e instanceof HTMLElement
+},
 
+each = function(arr, f)
+{
+    for(var k in arr)
+        if(arr.hasOwnProperty(k))
+            f(arr[k])
+},
 
-	var data = marmottajax.normalize(arguments);
+marmottajax = function(common_params)    // MAIN
+{
+    if(this.self)
+        return new marmottajax(arguments)
+    
+	var tmp, form,
+        t = this,
+        is_empty_params = true,
+        data = marmottajax.normalize(common_params)
+        
 
 	if (data === null)
 		throw "Invalid arguments";
 
-    extend(this, data);
-
-
-    if(this.method == 'file')
-    {
-        // Single file uploading. IE9+
-        
-        if(!(this.data instanceof HTMLElement))
+    extend(t, data)
+    
+    
+    if(t.where)
+        return each(t.where.querySelectorAll('.marmottajax'), function(el)
         {
-            throw "Invalid file";
-            return;
-        }
-        
-        this.method = 'POST'
-        
-        var formData  = new FormData()
-        
-        this.data = this.data.files[0];
-        
-        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
+            el.onsubmit = function(e)
+            {
+                e.preventDefault();
+                data = {
+                    url: el.action,
+                    formpassed: true,
+                    parameters: el,
+                    success: t.success,
+                    error: t.error
+                }
+                new marmottajax(data)
+            }
+        })
 
-        this.postData = formData
+    data = data.parameters
+    
+    for(tmp in t.parameters)
+        is_empty_params = false
+
+    if(t.is_html)
+    {
+        // Files and forms uploading.
+
+        var is_input = data.matches('input[type="file"]')
+        
+        
+        if(!(is_input || t.is_form))
+                throw "Invalid form";
+
+        
+        t.method = 'post'
+        t.isform = true
+        
+        if(!t.url)
+            t.url = data.action
+
+        form = new FormData(data)
+        
+        if(is_input)
+            form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
+
+        t.postData = form
     }
         else
     {
-        if (this.method.toUpperCase() != 'GET')
-            this.postData = serialize(this.parameters);
+        if (t.method.toUpperCase() != 'GET')
+            t.postData = serialize(t.parameters);
         else
-            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+            t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     
 
-	this.setXhr();
-	this.setWatcher();
+	t.setXhr();
+	t.setWatcher();
 };
 
 /**
@@ -93,13 +133,16 @@ marmottajax = function()    // MAIN
  * Constants variables
  */
 
-marmottajax.defaultData = {
+marmottajax.defaults = {
 
 	method: "get",
 	json: false,
 	watch: -1,
 
-	parameters: {}
+	parameters: {},
+	headers: {},
+	success: function(){},
+	error: function(){}
 
 };
 
@@ -113,86 +156,56 @@ marmottajax.okStatusCodes = [200, 201, 202, 203, 204, 205, 206];
  * Normalize data in Ajax request
  */
 
-marmottajax.normalize = function(data) {
+marmottajax.normalize = function(data)
+{
 
 	/**
 	 * Search data in arguments
 	 */
 
-	if (data.length === 0) {
-
+	if (typeof data != 'object')
 		return null;
 
-	}
+    data = data[0] || data
 
-	var result = {};
 
-	if (data.length === 1 && typeof data[0] === "object") {
-
-		result = data[0];
-
-	}
-
-	else if (data.length === 1 && typeof data[0] === "string") {
-
-		result = {
-
-			url: data[0]
-
-		};
-
-	}
-
-	else if (data.length === 2 && typeof data[0] === "string" && typeof data[1] === "object") {
-
-		data[1].url = data[0];
-
-		result = data[1];
-
-	}
+	var data_method, param,
+        request_params = data.parameters, 
+        result  = {url: typeof data == 'string' ? data : data.url},
+        typemap = {
+            json:       'string',
+            watch:      'number',
+            parameters: 'object',
+            headers:    'object',
+            success:    'function',
+            error:      'function'
+        }
+    
+    if(is_html(request_params))
+    {
+        result.is_html = true
+        result.is_form = request_params.matches('form')
+    }
+        else if(is_html(data))  // Pure form
+    {
+        data = {parameters: data}
+    }
+    
+    result.where = data.ajax_forms_in
 
 	/**
 	 * Normalize data in arguments
 	 */
+    
+    data_method = (typeof data.method == 'string') ? data.method.toLowerCase() : 0;
+    data_method = arr_contains(marmottajax.validMethods, data_method) ? data_method : marmottajax.defaults.method;
+    result.method = data_method
 
-	if (!(typeof result.method === "string" && marmottajax.validMethods.indexOf(result.method.toLowerCase()) != -1)) {
-
-		result.method = marmottajax.defaultData.method;
-
-	}
-
-	else {
-
-		result.method = result.method.toLowerCase();
-
-	}
-
-	if (typeof result.json !== "boolean") {
-
-		result.json = marmottajax.defaultData.json;
-
-	}
-
-	if (typeof result.watch !== "number") {
-
-		result.watch = marmottajax.defaultData.watch;
-
-	}
-
-	if (typeof result.parameters !== "object") {
-
-		result.parameters = marmottajax.defaultData.parameters;
-
-	}
-
-	if (typeof result.headers !== "object") {
-
-		result.headers = marmottajax.defaultData.headers;
-
-	}
+    
+    for(param in typemap)
+        result[param] = (typeof data[param]==typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
-
 };
 /**
  * set-xhr.js
@@ -243,7 +256,9 @@ marmottajax.prototype.setWatcher = function () {
  * Set XMLHttpRequest
  */
 
-marmottajax.prototype.setXhr = function () {
+marmottajax.prototype.setXhr = function ()
+{
+    var main = this
 
     this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
@@ -276,8 +291,8 @@ marmottajax.prototype.setXhr = function () {
 
     };
 
-    for (var name in this.xhr.callbacks) {
-
+    for (var name in this.xhr.callbacks)
+    {
         if (this.xhr.callbacks.hasOwnProperty(name)) {
 
             this[name] = function (name) {
@@ -322,43 +337,42 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status)) {
-
+        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status))
+        {
             var result = this.responseText;
 
-            if (this.json) {
-
-                try {
-
+            if (this.json)
+            {
+                try
+                {
                     result = JSON.parse(result);
-
                 }
 
-                catch (error) {
-
+                catch (error)
+                {
                     this.call("error", "invalid json");
-
+                    main.error("invalid json")
                     return false;
-
                 }
-
             }
 
             this.lastResult = result;
 
             this.call("then", result);
-
+            main.success(result)
         }
 
         else if (this.readyState === 4 && this.status == 404) {
 
             this.call("error", "404");
+            main.error('unknown error')
 
         }
 
         else if (this.readyState === 4) {
 
-            this.call("error", "unknow");
+            this.call("error", "unknown");
+            main.error('unknown error')
 
         }
 
@@ -366,14 +380,13 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
 
-    if(this.method!='file')
+    if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+    
 
-
-    if (this.headers)
-        for (header in this.headers)
-            if (this.headers.hasOwnProperty(header))
-                this.xhr.setRequestHeader(header, this.headers[header]);
+    for (header in this.headers)
+        if (this.headers.hasOwnProperty(header))
+            this.xhr.setRequestHeader(header, this.headers[header]);
 
     this.xhr.send(this.postData ? this.postData : null);
 };
@@ -501,8 +514,11 @@ marmottajax.prototype.updateXhr = function () {
     };
 
     this.xhr.open(this.method, this.url, true);
-    this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    this.xhr.send(postData ? postData : null);
+    
+    if(!this.isform)
+        this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    
+    this.xhr.send(this.postData ? this.postData : null);
 
 };
 
@@ -528,4 +544,4 @@ marmottajax.prototype.watcherTimeout = function() {
 
 	}
 
-};;return marmottajax; })();
+};return marmottajax; })();

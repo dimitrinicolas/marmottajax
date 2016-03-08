@@ -4,7 +4,9 @@
  * Set XMLHttpRequest
  */
 
-marmottajax.prototype.setXhr = function () {
+marmottajax.prototype.setXhr = function ()
+{
+    var main = this
 
     this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
@@ -37,8 +39,8 @@ marmottajax.prototype.setXhr = function () {
 
     };
 
-    for (var name in this.xhr.callbacks) {
-
+    for (var name in this.xhr.callbacks)
+    {
         if (this.xhr.callbacks.hasOwnProperty(name)) {
 
             this[name] = function (name) {
@@ -83,43 +85,42 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status)) {
-
+        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status))
+        {
             var result = this.responseText;
 
-            if (this.json) {
-
-                try {
-
+            if (this.json)
+            {
+                try
+                {
                     result = JSON.parse(result);
-
                 }
 
-                catch (error) {
-
+                catch (error)
+                {
                     this.call("error", "invalid json");
-
+                    main.error("invalid json")
                     return false;
-
                 }
-
             }
 
             this.lastResult = result;
 
             this.call("then", result);
-
+            main.success(result)
         }
 
         else if (this.readyState === 4 && this.status == 404) {
 
             this.call("error", "404");
+            main.error('unknown error')
 
         }
 
         else if (this.readyState === 4) {
 
-            this.call("error", "unknow");
+            this.call("error", "unknown");
+            main.error('unknown error')
 
         }
 
@@ -127,14 +128,13 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
 
-    if(this.method!='file')
+    if(!this.isform)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+    
 
-
-    if (this.headers)
-        for (header in this.headers)
-            if (this.headers.hasOwnProperty(header))
-                this.xhr.setRequestHeader(header, this.headers[header]);
+    for (header in this.headers)
+        if (this.headers.hasOwnProperty(header))
+            this.xhr.setRequestHeader(header, this.headers[header]);
 
     this.xhr.send(this.postData ? this.postData : null);
 };

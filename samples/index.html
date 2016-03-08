@@ -8,7 +8,7 @@
 
         <title>MarmottAjax — demo</title>
 
-        <script src="../bin/marmottajax.js"></script>
+        <script src="bin/marmottajax.js"></script>
 
     </head>
 
@@ -16,19 +16,41 @@
 
         <h2>Check the source code</h2>
 
+        <form action='/' id='formupload'>
+            <input type='text' name='in1'></input>
+            <input type='text' name='in2'></input>
+            <input type='submit' value='Submit form'></input>
+        </form>
+        
+        <form action='/' class='marmottajax'>
+            <input type='text' name='in1'></input>
+            <input type='text' name='in2'></input>
+            <input type='submit' value='Submit form'></input>
+        </form>
+        
+        <br>
+        <input type='file' id="fileupload"></input>
+        <br>
         <div id="console"></div>
     
         <script>
+        
+        var get_url = function(file)
+        {
+            return 'samples/'+file
+        },
+        
+        update_console = function(str)
+        {
+            document.getElementById("console").innerHTML += str + "<br><hr>";
+        }
 
             /**
              * Simply get file content
              */
 
-            marmottajax("text-file.txt").then(function(content) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "`text-file.txt` : " + content;
-
+            marmottajax(get_url("text-file.txt")).then(function(content) {
+                update_console("`text-file.txt` : " + content)
             });
 
             /**
@@ -37,7 +59,7 @@
 
             marmottajax({
 
-                url: "post.php",
+                url: get_url("post.php"),
                 method: "post",
 
                 parameters: {
@@ -47,16 +69,14 @@
 
                 }
 
-            }).then(function(result) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "Success to post to `post.php`";
-
-            }).error(function(message) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "<i style=\"color: red\">Error when posting to `post.php`</i>";
-
+            })
+            .then(function(result)
+            {
+                update_console("Success to post to `post.php`")
+            })
+            .error(function(message)
+            {
+                update_console("<i style=\"color: red\">Error when posting to `post.php`</i>")
             });
 
             /**
@@ -65,15 +85,15 @@
 
         	marmottajax({
 
-        		url: "data.json",
+        		url: get_url("data.json"),
                 json: true
 
-        	}).then(function(result) {
-
-                this.innerHTML += "<br>";
-                this.innerHTML += "Get `data.json` : " + JSON.stringify(result)
-
-            }).bind(document.getElementById("console"));
+        	})
+            .then(function(result)
+            {
+                update_console("Get `data.json` : " + JSON.stringify(result))
+            })
+            .bind(document.getElementById("console"));
             
             /**
              * With setted headers
@@ -81,19 +101,17 @@
 
             marmottajax({
 
-                url: "headers.php",
+                url: get_url("headers.php"),
                 method: "get",
                 headers: {
 
                     "Accept": "text/xml"
-
                 }
 
-            }).then(function(result) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += ("`headers.php` result : " + result);
-
+            })
+            .then(function(result)
+            {
+                update_console("`headers.php` result : " + result)
             });
 
             /**
@@ -102,24 +120,74 @@
 
             var watcher = new marmottajax({
 
-                url: "data.json",
+                url: get_url("data.json"),
                 json: true,
                 watch: 200
 
-            }).change(function(result) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "Detected changes on `data.json` : " + JSON.stringify(result);
-
+            })
+            .change(function(result)
+            {
+                update_console("Detected changes on `data.json` : " + JSON.stringify(result))
             });
 
             // Change interval time of `watcher`
 
-            setTimeout(function() {
-
-                watcher.changeTime(1000);
-
+            setTimeout(function()
+            {
+                watcher.changeTime(1000000)
             }, 800);
+            
+            
+            /**
+             * Sends a file
+             */
+            document.querySelector('#fileupload').onchange = function()
+            {
+                marmottajax({
+                    
+                    url: get_url("file.php"),
+                    parameters: document.querySelector('#fileupload')
+                    
+                })
+                .then(function(result)
+                {
+                    update_console("File sent!" + result)
+                });
+            }
+            
+            /**
+             * Sends a form
+             */
+            var form = document.querySelector('#formupload')
+            form.action = get_url("form.php")
+
+            form.onsubmit = function(e)
+            {
+                e.preventDefault();
+                marmottajax({
+                    
+                    // url: get_url("form.php"),    // If not presented, use action attribute
+                    parameters: form
+                    
+                })
+                .then(function(result)
+                {
+                    update_console("Form sent!  " + result)
+                });
+            }
+            
+            /**
+             * Sends a form automatically
+             */
+            document.querySelector('.marmottajax').action = get_url("form.php")
+
+            
+            marmottajax({ajax_forms_in: document, 
+                success: function(result)
+                {
+                    update_console("Form sent!  " + result)
+                }
+            })
 
         </script>
 

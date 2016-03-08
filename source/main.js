@@ -39,50 +39,90 @@ serialize = function(obj, prefix)
     return str.join("&");
 },
 
-
-marmottajax = function()    // MAIN
+is_html = function(e)
 {
-	if (this.self)
-		return new marmottajax(marmottajax.normalize(arguments));
+    return e instanceof HTMLElement
+},
 
+each = function(arr, f)
+{
+    for(var k in arr)
+        if(arr.hasOwnProperty(k))
+            f(arr[k])
+},
 
-	var data = marmottajax.normalize(arguments);
+marmottajax = function(common_params)    // MAIN
+{
+    if(this.self)
+        return new marmottajax(arguments)
+    
+	var tmp, form,
+        t = this,
+        is_empty_params = true,
+        data = marmottajax.normalize(common_params)
+        
 
 	if (data === null)
 		throw "Invalid arguments";
 
-    extend(this, data);
-
-
-    if(this.method == 'file')
-    {
-        // Single file uploading. IE9+
-        
-        if(!(this.data instanceof HTMLElement))
+    extend(t, data)
+    
+    
+    if(t.where)
+        return each(t.where.querySelectorAll('.marmottajax'), function(el)
         {
-            throw "Invalid file";
-            return;
-        }
-        
-        this.method = 'POST'
-        
-        var formData  = new FormData()
-        
-        this.data = this.data.files[0];
-        
-        formData.append((this.filename || 'file'), this.data);    // ONLY ONE now
+            el.onsubmit = function(e)
+            {
+                e.preventDefault();
+                data = {
+                    url: el.action,
+                    formpassed: true,
+                    parameters: el,
+                    success: t.success,
+                    error: t.error
+                }
+                new marmottajax(data)
+            }
+        })
 
-        this.postData = formData
+    data = data.parameters
+    
+    for(tmp in t.parameters)
+        is_empty_params = false
+
+    if(t.is_html)
+    {
+        // Files and forms uploading.
+
+        var is_input = data.matches('input[type="file"]')
+        
+        
+        if(!(is_input || t.is_form))
+                throw "Invalid form";
+
+        
+        t.method = 'post'
+        t.isform = true
+        
+        if(!t.url)
+            t.url = data.action
+
+        form = new FormData(data)
+        
+        if(is_input)
+            form.append((data.name || 'file'), data.files[0])    // ONLY ONE now; FOR LOOP??!
+
+        t.postData = form
     }
         else
     {
-        if (this.method.toUpperCase() != 'GET')
-            this.postData = serialize(this.parameters);
+        if (t.method.toUpperCase() != 'GET')
+            t.postData = serialize(t.parameters);
         else
-            this.url += (this.url.slice(-1)=='?' ? '' : '?')  +  serialize(this.parameters)
+            t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     
 
-	this.setXhr();
-	this.setWatcher();
+	t.setXhr();
+	t.setWatcher();
 };

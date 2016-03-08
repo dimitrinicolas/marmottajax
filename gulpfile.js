@@ -12,12 +12,17 @@ var whatchado = 'default',
         var module_name = (process.argv[3] && process.argv[3].slice(2)) || 'lib/marmottajax',
             wrappers = [
                 'define("'+module_name+'", function() {',
-                ';return marmottajax; })'];
+                'return marmottajax; })'];
 
         if(whatchado=='requirejs')
             return wrappers
 
-        return [';var marmottajax = (function(){', ';return marmottajax; })();'];
+        return [';var marmottajax = (function(){', 'return marmottajax; })();'];
+    },
+    get_name = function(add)
+    {
+        add = add || ''
+        return whatchado == 'requirejs' ? 'marmottajax-amd'+add+'.js'  : 'marmottajax'+add+'.js'
     }
 
 gulp.task("compile", function () {
@@ -40,12 +45,12 @@ gulp.task("compile", function () {
 			"!source/exporter.js"
 
 		])
-		.pipe(concat("marmottajax.js"))
+		.pipe(concat(get_name()))
         .pipe(inject.wrap(to_inject()[0], to_inject()[1]))
 		.pipe(gulp.dest("bin/"))
 
 		.pipe(uglify())
-		.pipe(rename("marmottajax.min.js"))
+		.pipe(rename(get_name('.min')))
 		.pipe(gulp.dest("bin/"));
 
 });

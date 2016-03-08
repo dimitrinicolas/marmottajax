@@ -5,84 +5,54 @@
  * Normalize data in Ajax request
  */
 
-marmottajax.normalize = function(data) {
+marmottajax.normalize = function(data)
+{
 
 	/**
 	 * Search data in arguments
 	 */
 
-	if (data.length === 0) {
-
+	if (typeof data != 'object')
 		return null;
 
-	}
+    data = data[0] || data
 
-	var result = {};
 
-	if (data.length === 1 && typeof data[0] === "object") {
-
-		result = data[0];
-
-	}
-
-	else if (data.length === 1 && typeof data[0] === "string") {
-
-		result = {
-
-			url: data[0]
-
-		};
-
-	}
-
-	else if (data.length === 2 && typeof data[0] === "string" && typeof data[1] === "object") {
-
-		data[1].url = data[0];
-
-		result = data[1];
-
-	}
+	var data_method, param,
+        request_params = data.parameters, 
+        result  = {url: typeof data == 'string' ? data : data.url},
+        typemap = {
+            json:       'string',
+            watch:      'number',
+            parameters: 'object',
+            headers:    'object',
+            success:    'function',
+            error:      'function'
+        }
+    
+    if(is_html(request_params))
+    {
+        result.is_html = true
+        result.is_form = request_params.matches('form')
+    }
+        else if(is_html(data))  // Pure form
+    {
+        data = {parameters: data}
+    }
+    
+    result.where = data.ajax_forms_in
 
 	/**
 	 * Normalize data in arguments
 	 */
+    
+    data_method = (typeof data.method == 'string') ? data.method.toLowerCase() : 0;
+    data_method = arr_contains(marmottajax.validMethods, data_method) ? data_method : marmottajax.defaults.method;
+    result.method = data_method
 
-	if (!(typeof result.method === "string" && marmottajax.validMethods.indexOf(result.method.toLowerCase()) != -1)) {
-
-		result.method = marmottajax.defaultData.method;
-
-	}
-
-	else {
-
-		result.method = result.method.toLowerCase();
-
-	}
-
-	if (typeof result.json !== "boolean") {
-
-		result.json = marmottajax.defaultData.json;
-
-	}
-
-	if (typeof result.watch !== "number") {
-
-		result.watch = marmottajax.defaultData.watch;
-
-	}
-
-	if (typeof result.parameters !== "object") {
-
-		result.parameters = marmottajax.defaultData.parameters;
-
-	}
-
-	if (typeof result.headers !== "object") {
-
-		result.headers = marmottajax.defaultData.headers;
-
-	}
+    
+    for(param in typemap)
+        result[param] = (typeof data[param]==typemap[param]) ? data[param] : marmottajax.defaults[param]
 
 	return result;
-
 };

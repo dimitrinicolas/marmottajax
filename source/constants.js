@@ -5,13 +5,16 @@
  * Constants variables
  */
 
-marmottajax.defaultData = {
+marmottajax.defaults = {
 
 	method: "get",
 	json: false,
 	watch: -1,
 
-	parameters: {}
+	parameters: {},
+	headers: {},
+	success: function(){},
+	error: function(){}
 
 };
 
