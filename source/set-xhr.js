@@ -37,8 +37,8 @@ marmottajax.prototype.setXhr = function () {
 
     };
 
-    for (var name in this.xhr.callbacks) {
-
+    for (var name in this.xhr.callbacks)
+    {
         if (this.xhr.callbacks.hasOwnProperty(name)) {
 
             this[name] = function (name) {
@@ -83,32 +83,27 @@ marmottajax.prototype.setXhr = function () {
 
     this.xhr.onreadystatechange = function () {
 
-        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status)) {
-
+        if (this.readyState === 4 && arr_contains(marmottajax.okStatusCodes, this.status))
+        {
             var result = this.responseText;
 
-            if (this.json) {
-
-                try {
-
+            if (this.json)
+            {
+                try
+                {
                     result = JSON.parse(result);
-
                 }
 
-                catch (error) {
-
+                catch (error)
+                {
                     this.call("error", "invalid json");
-
                     return false;
-
                 }
-
             }
 
             this.lastResult = result;
 
             this.call("then", result);
-
         }
 
         else if (this.readyState === 4 && this.status == 404) {
@@ -131,10 +126,9 @@ marmottajax.prototype.setXhr = function () {
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
 
 
-    if (this.headers)
-        for (header in this.headers)
-            if (this.headers.hasOwnProperty(header))
-                this.xhr.setRequestHeader(header, this.headers[header]);
+    for (header in this.headers)
+        if (this.headers.hasOwnProperty(header))
+            this.xhr.setRequestHeader(header, this.headers[header]);
 
     this.xhr.send(this.postData ? this.postData : null);
 };

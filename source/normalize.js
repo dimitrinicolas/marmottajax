@@ -5,18 +5,19 @@
  * Normalize data in Ajax request
  */
 
-marmottajax.normalize = function(data) {
+marmottajax.normalize = function(data)
+{
 
 	/**
 	 * Search data in arguments
 	 */
 
-	if (!data.length)
+	if (typeof data != 'object')
 		return null;
-    data = data[0]
+    data = data[0] || data
     
 	var data_method, param,
-        result  = {url: data.url},
+        result  = {url: data.url || data},
         typemap = {
             json:       'string',
             watch:      'number',
@@ -30,7 +31,7 @@ marmottajax.normalize = function(data) {
 	 */
     
     data_method = (typeof data.method == 'string') ? data.method.toLowerCase() : 0;
-    data_method = !!~marmottajax.validMethods.indexOf(data_method) ? data_method : marmottajax.defaults.method;
+    data_method = arr_contains(marmottajax.validMethods, data_method) ? data_method : marmottajax.defaults.method;
     result.method = data_method
 
     

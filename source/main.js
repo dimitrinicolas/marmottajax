@@ -39,7 +39,6 @@ serialize = function(obj, prefix)
     return str.join("&");
 },
 
-
 marmottajax = function(params)    // MAIN
 {
     if(this.self)
@@ -61,7 +60,7 @@ marmottajax = function(params)    // MAIN
 
     if(t.method == 'form')
     {
-        // Single file uploading. IE9+
+        // Files and forms uploading.
 
         
         if(!(data instanceof HTMLElement &&

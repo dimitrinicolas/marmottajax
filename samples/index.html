@@ -8,7 +8,7 @@
 
         <title>MarmottAjax — demo</title>
 
-        <script src="../bin/marmottajax.js"></script>
+        <script src="bin/marmottajax.js"></script>
 
     </head>
 
@@ -19,16 +19,23 @@
         <div id="console"></div>
     
         <script>
+        
+        var get_url = function(file)
+        {
+            return 'samples/'+file
+        },
+        
+        update_console = function(str)
+        {
+            document.getElementById("console").innerHTML += str + "<br><hr>";
+        }
 
             /**
              * Simply get file content
              */
 
-            marmottajax("text-file.txt").then(function(content) {
-
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "`text-file.txt` : " + content;
-
+            marmottajax(get_url("text-file.txt")).then(function(content) {
+                update_console("`text-file.txt` : " + content)
             });
 
             /**
@@ -37,7 +44,7 @@
 
             marmottajax({
 
-                url: "post.php",
+                url: get_url("post.php"),
                 method: "post",
 
                 parameters: {
@@ -49,13 +56,11 @@
 
             }).then(function(result) {
 
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "Success to post to `post.php`";
+                update_console("Success to post to `post.php`");
 
             }).error(function(message) {
 
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "<i style=\"color: red\">Error when posting to `post.php`</i>";
+                update_console("<i style=\"color: red\">Error when posting to `post.php`</i>")
 
             });
 
@@ -65,13 +70,12 @@
 
         	marmottajax({
 
-        		url: "data.json",
+        		url: get_url("data.json"),
                 json: true
 
         	}).then(function(result) {
 
-                this.innerHTML += "<br>";
-                this.innerHTML += "Get `data.json` : " + JSON.stringify(result)
+                update_console("Get `data.json` : " + JSON.stringify(result))
 
             }).bind(document.getElementById("console"));
             
@@ -81,7 +85,7 @@
 
             marmottajax({
 
-                url: "headers.php",
+                url: get_url("headers.php"),
                 method: "get",
                 headers: {
 
@@ -91,8 +95,7 @@
 
             }).then(function(result) {
 
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += ("`headers.php` result : " + result);
+                update_console("`headers.php` result : " + result);
 
             });
 
@@ -102,14 +105,13 @@
 
             var watcher = new marmottajax({
 
-                url: "data.json",
+                url: get_url("data.json"),
                 json: true,
                 watch: 200
 
             }).change(function(result) {
 
-                document.getElementById("console").innerHTML += "<br>";
-                document.getElementById("console").innerHTML += "Detected changes on `data.json` : " + JSON.stringify(result);
+                update_console("Detected changes on `data.json` : " + JSON.stringify(result));
 
             });
 
