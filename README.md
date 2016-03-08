@@ -26,7 +26,7 @@ marmottajax({parameters: document.querySelector('form')})   // Url will be taken
 marmottajax({ajax_forms_in: document.querySelector('div#several_forms'), success: function(){}})   // Only `success`, not `then`!
 
 /* All except the last one can be declared with `.then`, `.error` Promises and `success`, `error` parameters on your taste.
-    If both are presented, both will be invoked.
+    If both are presented, both are invoked.
 */
 
 ```
