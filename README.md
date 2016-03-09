@@ -22,7 +22,7 @@ You also can pass just file input or form DOMElement, or even any DOMElement, wh
 
 Signatures:
 ```javascript
-marmottajax('url')
+marmottajax('url') // It's GET. Just checkout. Only case when You can write URL outside of Options Object.
 marmottajax({url: '/some_url'})
 marmottajax({url: '/some_url', method: 'POST', parameters: {a:1, b:{c:1, d:7}, e:[1,2,3]})  // Query string or POST parameters.
 marmottajax({url: '/some_url', method: 'GET', json: true, watch: 200}).change(function(new_data){}) // Watching for a file/data.
