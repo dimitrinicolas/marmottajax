@@ -122,7 +122,7 @@ setTimeout(function() {
  marmottajax({
     url: "/file_uload.rb",
     method: "file",
-    data: file_in_DOM,
+    parameters: file_in_DOM,
     filename: 'the_image'   // Optional! If not presented, uses just 'file' automatically.
 
 }).then(function(response_data) {
