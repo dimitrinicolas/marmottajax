@@ -116,9 +116,12 @@ marmottajax = function(common_params)    // MAIN
     }
         else
     {
-        if (t.method.toUpperCase() != 'GET')
-            t.postData = serialize(t.parameters);
-        else
+        if (t.method.toUpperCase() != 'GET') {
+            if (t.body)
+                t.postData = t.body;    
+            else 
+                t.postData = serialize(t.parameters);
+        } else
             t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     

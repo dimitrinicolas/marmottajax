@@ -111,6 +111,21 @@ setTimeout(function() {
 })
 
 
+/**
+ * Pass a JSON string as the request body
+ */
+
+ marmottajax({
+    url: "/post.asm",
+    method: "post",
+    body: '{ "Answer" : 42 }',
+    headers : {
+        "Content-Type" : "application/json"
+    }
+}).then(function(response_data) {
+    // result
+})
+
 
 /**
  * Pass a file. Workis like the same as in jQuery, but lighter.

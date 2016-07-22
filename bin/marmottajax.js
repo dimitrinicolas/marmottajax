@@ -116,9 +116,12 @@ marmottajax = function(common_params)    // MAIN
     }
         else
     {
-        if (t.method.toUpperCase() != 'GET')
-            t.postData = serialize(t.parameters);
-        else
+        if (t.method.toUpperCase() != 'GET') {
+            if (t.body)
+                t.postData = t.body;    
+            else 
+                t.postData = serialize(t.parameters);
+        } else
             t.url += (t.url.slice(-1)=='?' || is_empty_params ? '' : '?')  +  serialize(t.parameters)
     }
     
@@ -168,7 +171,6 @@ marmottajax.normalize = function(data)
 
     data = data[0] || data
 
-
 	var data_method, param,
         request_params = data.parameters, 
         result  = {url: typeof data == 'string' ? data : data.url},
@@ -178,7 +180,8 @@ marmottajax.normalize = function(data)
             parameters: 'object',
             headers:    'object',
             success:    'function',
-            error:      'function'
+            error:      'function',
+            body:       'string'
         }
     
     if(is_html(request_params))
@@ -380,10 +383,9 @@ marmottajax.prototype.setXhr = function ()
 
     this.xhr.open(this.method, this.url, true);
 
-    if(!this.isform)
+    if(!this.isform && !this.body)
         this.xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
     
-
     for (header in this.headers)
         if (this.headers.hasOwnProperty(header))
             this.xhr.setRequestHeader(header, this.headers[header]);
@@ -515,11 +517,10 @@ marmottajax.prototype.updateXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
     
-    if(!this.isform)
+    if(!this.isform && !this.body)
         this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     
     this.xhr.send(this.postData ? this.postData : null);
-
 };
 
 /**

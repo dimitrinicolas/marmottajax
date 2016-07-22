@@ -17,7 +17,6 @@ marmottajax.normalize = function(data)
 
     data = data[0] || data
 
-
 	var data_method, param,
         request_params = data.parameters, 
         result  = {url: typeof data == 'string' ? data : data.url},
@@ -27,7 +26,8 @@ marmottajax.normalize = function(data)
             parameters: 'object',
             headers:    'object',
             success:    'function',
-            error:      'function'
+            error:      'function',
+            body:       'string'
         }
     
     if(is_html(request_params))
