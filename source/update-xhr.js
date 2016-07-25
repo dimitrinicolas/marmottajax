@@ -123,9 +123,8 @@ marmottajax.prototype.updateXhr = function () {
 
     this.xhr.open(this.method, this.url, true);
     
-    if(!this.isform)
+    if(!this.isform && !this.body)
         this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     
     this.xhr.send(this.postData ? this.postData : null);
-
 };

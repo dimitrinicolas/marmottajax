@@ -188,6 +188,22 @@
                     update_console("Form sent!  " + result)
                 }
             })
+            
+            /**
+             * Sends raw request string
+             */
+            marmottajax({
+                url : get_url("body.php"),
+                method : 'post',
+                body : '{ "This should" : "be parsed as JSON on the server"  }',
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                success: function(result)
+                {
+                    update_console("Request Body sent!  " + result)
+                }
+            })
 
         </script>
 
