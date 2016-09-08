@@ -1,6 +1,7 @@
 # MarmottAjax
 
-[![Join the chat at https://gitter.im/dimitrinicolas/marmottajax](https://badges.gitter.im/dimitrinicolas/marmottajax.svg)](https://gitter.im/dimitrinicolas/marmottajax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+09/08/2016 : This library is depreaced and must be completely reworked
+
 > Powerful AJAX actions intelligent library
 
 > Our philosophy: library should not be a combain. It should do one thing and do it perfect.
@@ -143,7 +144,7 @@ setTimeout(function() {
 }).then(function(response_data) {
     // result
 })
- 
+
 ```
 
 ## Contributing
