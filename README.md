@@ -69,6 +69,7 @@ marmottajax({
 }).success(function(result) {
     // result
 });
+```
 
 ## Contributing
 
