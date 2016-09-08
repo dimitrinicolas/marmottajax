@@ -1,24 +1,26 @@
 {
   "name": "marmottajax",
-  "description": "Easily use ajax in your application",
-  "version": "2.2.0",
-  "main": "bin/module.js",
-  "author": "Dimitri Nicolas",
+  "version": "3.0.0",
+  "description": "Simple ajax library",
+  "main": "index.js",
   "scripts": {
-    "build": "gulp"
+    "build:dist": "uglifyjs index.js > index.min.js",
+    "build": "npm run build:dist"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dimitrinicolas/marmottajax.git"
+    "url": "git+https://github.com/dimitrinicolas/marmottajax.git"
   },
+  "keywords": [
+    "ajax"
+  ],
+  "author": "Dimitri NICOLAS",
+  "license": "WTFPL",
   "bugs": {
     "url": "https://github.com/dimitrinicolas/marmottajax/issues"
   },
+  "homepage": "https://github.com/dimitrinicolas/marmottajax#readme",
   "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-concat": "^2.5.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^1.1.0",
-    "gulp-inject-string": "^1.1.0"
+    "uglify-js": "^2.7.3"
   }
 }

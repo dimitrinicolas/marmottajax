@@ -3,5 +3,4 @@ node_modules
 logs
 *.log
 tmp
-*.iml
-.idea/
+.DS_Store
