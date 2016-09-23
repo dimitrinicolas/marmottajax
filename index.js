@@ -338,6 +338,6 @@ marmottajax.prototype.watcherTimeout = function() {
 	}
 };
 
-if (typeof module !== "undefined" && module.export) {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = marmottajax;
 }
