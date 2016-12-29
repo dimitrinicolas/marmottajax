@@ -67,7 +67,6 @@ marmottajax.prototype.normalize = function(parameters) {
     if (typeof parameters.watch === "number") {
         this.watch = parameters.watch;
     }
-    console.log(typeof parameters, parameters);
     if (typeof parameters.parameters === "object") {
 		this.parameters = parameters.parameters;
 	}
