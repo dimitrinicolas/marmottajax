@@ -6,7 +6,7 @@ Simple ajax library
 
 ## Usage
 
-The different methods that can be used with this library are: `get`,` post`, `put`, `update`, `delete`.
+The different methods that can be used with this library are: `get`,` post`, `put`, `delete`.
 
 ### Simply get file content
 ```javascript

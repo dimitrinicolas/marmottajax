@@ -40,7 +40,7 @@ var marmottajax = function(parameters) {
 
 };
 
-marmottajax.validMethods = ["get", "post", "put", "update", "delete"];
+marmottajax.validMethods = ["get", "post", "put", "delete"];
 marmottajax.prototype.normalize = function(parameters) {
 
     if (typeof parameters === "string") {
