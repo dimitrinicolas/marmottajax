@@ -1,6 +1,6 @@
 {
   "name": "marmottajax",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Simple ajax library",
   "main": "index.js",
   "scripts": {

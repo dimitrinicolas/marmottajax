@@ -9,9 +9,11 @@ var marmottajax = function(parameters) {
 
 	if (this.method !== "get") {
         if (!this.formData) {
-            this.formData = "?";
+            this.formData = new FormData();
     		for (var key in this.parameters) {
-    			this.formData += this.parameters.hasOwnProperty(key) ? "&" + key + "=" + this.parameters[key] : "";
+				if (this.parameters.hasOwnProperty(key)) {
+					this.formData.append(key, this.parameters[key]);
+				}
     		}
         }
 	}
