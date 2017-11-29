@@ -1,6 +1,6 @@
 {
   "name": "marmottajax",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Simple ajax library",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/dimitrinicolas/marmottajax#readme",
   "devDependencies": {
-    "uglify-js": "^2.7.3"
+    "uglify-js": "^3.2.0"
   }
 }

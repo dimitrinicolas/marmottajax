@@ -7,34 +7,21 @@ var marmottajax = function(parameters) {
         throw "invalid arguments";
     }
 
-	if (this.method !== "get") {
-        if (!this.formData) {
-            this.formData = new FormData();
-    		for (var key in this.parameters) {
-				if (this.parameters.hasOwnProperty(key)) {
-					this.formData.append(key, this.parameters[key]);
-				}
-    		}
-        }
-	}
-
-	else {
-        var had = this.url.indexOf("?") > -1;
-        if (!had) {
-            this.url += "?";
-        }
-        var first = true;
-		for (var key in this.parameters) {
-            if (this.parameters.hasOwnProperty(key) && typeof this.parameters[key] === "string") {
-                if (first && !had) {
-                    this.url += key + "=" + this.parameters[key];
-                }
-                else {
-                    this.url += "&" + key + "=" + this.parameters[key];
-                }
-                first = false;
+    var had = this.url.indexOf("?") > -1;
+    if (!had) {
+        this.url += "?";
+    }
+    var first = true;
+	for (var key in this.parameters) {
+        if (this.parameters.hasOwnProperty(key) && typeof this.parameters[key] === "string") {
+            if (first && !had) {
+                this.url += key + "=" + this.parameters[key];
             }
-		}
+            else {
+                this.url += "&" + key + "=" + this.parameters[key];
+            }
+            first = false;
+        }
 	}
 
 	this.setXhr();
@@ -51,8 +38,9 @@ marmottajax.prototype.normalize = function(parameters) {
         };
     }
 
-    if (typeof parameters !== "object") { return; }
-	if (typeof parameters.url !== "string") { return; }
+    if (typeof parameters !== "object" || typeof parameters.url !== "string") {
+		return;
+	}
 
     this.url = parameters.url;
     this.method = "get";
